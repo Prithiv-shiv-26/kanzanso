@@ -1,0 +1,90 @@
+[
+    {
+        "weather": "clear sky",
+        "mood": "The bright sunshine today is perfect for boosting your mood and energy levels. Embrace the positive vibes!",
+        "activities": [
+            "Go for a walk in a nearby park",
+            "Have a picnic outdoors",
+            "Practice outdoor meditation",
+            "Read a book outside",
+            "Try outdoor photography"
+        ]
+    },
+    {
+        "weather": "partly cloudy",
+        "mood": "The mix of sun and clouds creates a balanced atmosphere, ideal for both productivity and reflection.",
+        "activities": [
+            "Take a leisurely bike ride",
+            "Visit a farmers' market",
+            "Do some gardening",
+            "Practice yoga outdoors",
+            "Write in your journal on a patio"
+        ]
+    },
+    {
+        "weather": "cloudy",
+        "mood": "Cloudy days can help you focus inward and be more productive with fewer distractions.",
+        "activities": [
+            "Visit a museum or art gallery",
+            "Try a new recipe",
+            "Reorganize a space in your home",
+            "Start a creative project",
+            "Plan your goals for the week"
+        ]
+    },
+    {
+        "weather": "rain",
+        "mood": "Rainy days create a soothing atmosphere perfect for reflection, creativity, and cozy activities.",
+        "activities": [
+            "Read a book with a cup of tea",
+            "Watch a thought-provoking movie",
+            "Practice indoor mindfulness",
+            "Cook a comforting meal",
+            "Work on a creative writing project"
+        ]
+    },
+    {
+        "weather": "heavy rain",
+        "mood": "The sound of heavy rain provides a natural white noise that can help calm your mind and improve focus.",
+        "activities": [
+            "Have a movie marathon",
+            "Work on puzzles or board games",
+            "Start an indoor workout routine",
+            "Call a friend for a long chat",
+            "Take a relaxing bath"
+        ]
+    },
+    {
+        "weather": "snow",
+        "mood": "Snow transforms the world into a serene landscape, inviting you to slow down and appreciate the beauty of stillness.",
+        "activities": [
+            "Build a snowman or snow fort",
+            "Take photos of the winter scenery",
+            "Make hot chocolate from scratch",
+            "Read by the window watching the snow",
+            "Try snow meditation (mindfully observe falling snow)"
+        ]
+    },
+    {
+        "weather": "fog",
+        "mood": "Foggy days provide a mystical atmosphere that can stimulate your imagination and creative thinking.",
+        "activities": [
+            "Write in your journal",
+            "Practice slow, mindful walking",
+            "Take atmospheric photographs",
+            "Read mystery novels",
+            "Listen to calming music"
+        ]
+    },
+    {
+        "weather": "default",
+        "mood": "Whatever the weather, today is a new opportunity to nurture your wellbeing and find moments of joy.",
+        "activities": [
+            "Practice gratitude by listing three things you appreciate",
+            "Take short mindfulness breaks throughout the day",
+            "Connect with a friend or family member",
+            "Move your body in a way that feels good",
+            "Learn something new, however small"
+        ]
+    }
+]

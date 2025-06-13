@@ -1,0 +1,428 @@
+/* Base styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header styles */
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+header h1 {
+    color: #1DB954;
+    margin-bottom: 10px;
+}
+
+header p {
+    color: #666;
+    font-size: 18px;
+}
+
+.header-nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    color: #666;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s;
+}
+
+.back-link i {
+    margin-right: 5px;
+}
+
+.back-link:hover {
+    color: #1DB954;
+}
+
+/* Footer styles */
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+    color: #666;
+}
+
+footer a {
+    color: #1DB954;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Mood cards */
+.cards-list {
+    z-index: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+}
+  
+.card {
+    margin: 30px auto;
+    width: 300px;
+    height: 300px;
+    border-radius: 40px;
+    box-shadow: 5px 5px 30px 7px rgba(0,0,0,0.25), -5px -5px 30px 7px rgba(0,0,0,0.22);
+    cursor: pointer;
+    transition: 0.4s;
+    /* Button-specific resets */
+    background: none;
+    border: none;
+    padding: 0;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    overflow: hidden;
+}
+  
+.card .card_image {
+    width: inherit;
+    height: inherit;
+    border-radius: 40px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+  
+.card .card_image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+  
+.card .card_title {
+    text-align: center;
+    border-radius: 0px 0px 40px 40px;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 30px;
+    margin-top: -80px;
+    height: 40px;
+    position: relative;
+    z-index: 1;
+}
+  
+.card:hover {
+    transform: scale(0.95, 0.95);
+    box-shadow: 5px 5px 30px 15px rgba(0,0,0,0.25), 
+      -5px -5px 30px 15px rgba(0,0,0,0.22);
+}
+
+.card:hover .card_image img {
+    transform: scale(1.1);
+}
+  
+.title-white {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+  
+.title-black {
+    color: black;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+/* Mood-specific styles */
+.card-happy {
+    background: linear-gradient(135deg, #ffeb3b, #ff9800);
+}
+
+.card-sad {
+    background: linear-gradient(135deg, #90caf9, #3f51b5);
+}
+
+.card-nervous {
+    background: linear-gradient(135deg, #e1bee7, #9c27b0);
+}
+
+.card-love {
+    background: linear-gradient(135deg, #f48fb1, #e91e63);
+}
+
+.card-focus {
+    background: linear-gradient(135deg, #80deea, #00bcd4);
+}
+
+.card-energetic {
+    background: linear-gradient(135deg, #ffcc80, #ff5722);
+}
+
+/* Player container */
+.contender {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.row.padding {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Login UI */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+}
+
+.login-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    text-align: center;
+    max-width: 500px;
+}
+
+.login-card h2 {
+    margin-top: 0;
+    color: #1DB954;
+    font-size: 28px;
+}
+
+.login-card p {
+    margin-bottom: 30px;
+    color: #666;
+    line-height: 1.6;
+}
+
+.spotify-button {
+    background-color: #1DB954;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.spotify-button:hover {
+    background-color: #1ed760;
+}
+
+/* User profile */
+.user-profile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    background-color: #fff;
+    border-radius: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+
+.user-name {
+    font-weight: bold;
+    color: #333;
+}
+
+.logout-button {
+    background-color: transparent;
+    color: #666;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 5px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.logout-button:hover {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+/* Player controls */
+.player-controls {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.now-playing {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 500px;
+}
+
+#current-track-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 5px;
+    margin-right: 15px;
+    object-fit: cover;
+}
+
+.track-info {
+    flex: 1;
+}
+
+#current-track-name {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+#current-track-artist {
+    color: #666;
+    font-size: 14px;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.control-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin: 0 15px;
+    padding: 10px;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+
+.control-button:hover {
+    background-color: #f0f0f0;
+}
+
+.control-button svg {
+    fill: #333;
+}
+
+#play-pause-button {
+    background-color: #1DB954;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#play-pause-button svg {
+    fill: white;
+}
+
+#play-pause-button:hover {
+    background-color: #1ed760;
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 300px;
+}
+
+.volume-control svg {
+    fill: #666;
+    margin-right: 10px;
+}
+
+#volume-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 5px;
+    border-radius: 5px;
+    background: #ddd;
+    outline: none;
+}
+
+#volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #1DB954;
+    cursor: pointer;
+}
+
+#volume-slider::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #1DB954;
+    cursor: pointer;
+    border: none;
+}
+
+/* Responsive styles */
+@media all and (max-width: 768px) {
+    .cards-list {
+        flex-direction: column;
+    }
+    
+    .card {
+        width: 90%;
+        max-width: 400px;
+    }
+    
+    .now-playing {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    #current-track-image {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+    
+    .controls {
+        margin-top: 20px;
+    }
+}

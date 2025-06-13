@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify API Debug Tool</title>
+    <link rel="icon" type="image/png" href="../assets/img/8.png" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #1DB954;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        button {
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #1ed760;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .result {
+            margin-top: 10px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+        .status {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .status.connected {
+            color: #1DB954;
+        }
+        .status.disconnected {
+            color: #e74c3c;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #666;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            color: #1DB954;
+        }
+    </style>
+    <!-- jQuery -->
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Back to Mood Player</a>
+    
+    <h1>Spotify API Debug Tool</h1>
+    <p>Use this tool to diagnose issues with the Spotify API integration.</p>
+    
+    <div class="card">
+        <h2>Connection Status</h2>
+        <div id="connection-status" class="status disconnected">Checking...</div>
+        <div id="token-info"></div>
+        <button id="get-token-button">Get New Token</button>
+        <button id="clear-token-button">Clear Token</button>
+    </div>
+    
+    <div class="card">
+        <h2>API Test</h2>
+        <button id="test-api-button">Test API Connection</button>
+        <div id="api-result" class="result"></div>
+    </div>
+    
+    <div class="card">
+        <h2>Browser Information</h2>
+        <div id="browser-info"></div>
+    </div>
+    
+    <div class="card">
+        <h2>Network Test</h2>
+        <button id="test-network-button">Test Network</button>
+        <div id="network-result" class="result"></div>
+    </div>
+    
+    <div class="card">
+        <h2>CORS Information</h2>
+        <p>CORS (Cross-Origin Resource Sharing) issues are common when working with the Spotify API. Here's how to fix them:</p>
+        
+        <h3>Common CORS Issues:</h3>
+        <ul>
+            <li><strong>Opening files directly:</strong> If you're opening the HTML file directly in your browser (using a file:// URL), CORS restrictions will prevent API calls. Use a local server instead.</li>
+            <li><strong>Incorrect Redirect URI:</strong> The Redirect URI in your Spotify Developer Dashboard must exactly match the URL you're using (including http/https, port numbers, etc.)</li>
+            <li><strong>Missing headers:</strong> The Spotify API requires proper Authorization headers for all requests.</li>
+            <li><strong>Frontend/Backend Communication:</strong> Your frontend (127.0.0.1:5501) and backend (port 8080) are running on different ports, which can cause CORS issues for API calls between them. This is separate from the Spotify redirect URI issue.</li>
+        </ul>
+        
+        <h3>Solutions:</h3>
+        <ul>
+            <li>Use a local server like Live Server (VS Code extension), http-server (npm), or any other web server</li>
+            <li><strong>Important:</strong> Make sure your Redirect URI in the Spotify Developer Dashboard matches exactly: <code>http://127.0.0.1:5501/project/playlist/index.html</code></li>
+            <li><strong>Spotify Requirements:</strong>
+                <ul>
+                    <li>Use HTTPS for redirect URIs, unless using a loopback address</li>
+                    <li>For loopback addresses, use explicit IP like <code>http://127.0.0.1:PORT</code> or <code>http://[::1]:PORT</code></li>
+                    <li><code>localhost</code> is not allowed as a redirect URI</li>
+                </ul>
+            </li>
+            <li>If you're seeing "INVALID_CLIENT: Invalid redirect URI", you need to add the exact URI <code>http://127.0.0.1:5501/project/playlist/index.html</code> to your Spotify Developer Dashboard at <a href="https://developer.spotify.com/dashboard" target="_blank">https://developer.spotify.com/dashboard</a></li>
+            <li>Make sure your frontend server is running on port 5501, which appears to be your current setup</li>
+        </ul>
+    </div>
+    
+    <script>
+        $(document).ready(function() {
+            // Get token from URL hash or localStorage
+            const hash = window.location.hash
+                .substring(1)
+                .split('&')
+                .reduce(function (initial, item) {
+                    if (item) {
+                        const parts = item.split('=');
+                        initial[parts[0]] = decodeURIComponent(parts[1]);
+                    }
+                    return initial;
+                }, {});
+            
+            // Clear hash
+            window.location.hash = '';
+            
+            // Check for token
+            let token = hash.access_token;
+            
+            // If no token in hash, check localStorage
+            if (!token) {
+                token = localStorage.getItem('spotify_token');
+            } else {
+                // Save token to localStorage
+                localStorage.setItem('spotify_token', token);
+            }
+            
+            // Update connection status
+            updateConnectionStatus(token);
+            
+            // Display browser info
+            displayBrowserInfo();
+            
+            // Get token button
+            $('#get-token-button').click(function() {
+                const clientId = '754095ec83f74d30ac89dbd32a298582';
+                // Using explicit loopback address as required by Spotify
+                const redirectUri = 'http://127.0.0.1:5501/project/playlist/index.html';
+                const scopes = [
+                    'streaming',
+                    'user-read-email',
+                    'user-read-private',
+                    'user-modify-playback-state',
+                    'user-read-playback-state',
+                    'user-library-read',
+                    'user-library-modify',
+                    'playlist-read-private',
+                    'playlist-read-collaborative'
+                ];
+                
+                window.location.href = `https://accounts.spotify.com/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join('%20')}&response_type=token`;
+            });
+            
+            // Clear token button
+            $('#clear-token-button').click(function() {
+                localStorage.removeItem('spotify_token');
+                token = null;
+                updateConnectionStatus(token);
+            });
+            
+            // Test API button
+            $('#test-api-button').click(function() {
+                if (!token) {
+                    $('#api-result').html('<p>No token available. Please get a new token first.</p>');
+                    return;
+                }
+                
+                $('#api-result').html('<p>Testing API connection...</p>');
+                
+                // Test API connection
+                $.ajax({
+                    url: 'https://api.spotify.com/v1/me',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
+                    success: function(response) {
+                        $('#api-result').html(`
+                            <p class="status connected">API connection successful!</p>
+                            <p>User: ${response.display_name} (${response.email})</p>
+                            <p>Country: ${response.country}</p>
+                            <p>Account Type: ${response.product}</p>
+                            <pre>${JSON.stringify(response, null, 2)}</pre>
+                        `);
+                    },
+                    error: function(xhr, status, error) {
+                        let errorMessage = 'Unknown error';
+                        
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            if (response.error && response.error.message) {
+                                errorMessage = response.error.message;
+                            }
+                        } catch (e) {
+                            errorMessage = xhr.responseText || error;
+                        }
+                        
+                        $('#api-result').html(`
+                            <p class="status disconnected">API connection failed!</p>
+                            <p>Error: ${errorMessage}</p>
+                            <p>Status: ${xhr.status} ${status}</p>
+                            <pre>${xhr.responseText}</pre>
+                        `);
+                    }
+                });
+            });
+            
+            // Test network button
+            $('#test-network-button').click(function() {
+                $('#network-result').html('<p>Testing network connectivity...</p>');
+                
+                // Test multiple endpoints
+                const endpoints = [
+                    { name: 'Spotify Accounts', url: 'https://accounts.spotify.com/api/token' },
+                    { name: 'Spotify API', url: 'https://api.spotify.com/v1/browse/new-releases?limit=1' },
+                    { name: 'Google', url: 'https://www.google.com' }
+                ];
+                
+                let results = '';
+                let completedTests = 0;
+                
+                endpoints.forEach(endpoint => {
+                    $.ajax({
+                        url: endpoint.url,
+                        method: 'GET',
+                        timeout: 5000,
+                        complete: function(xhr, status) {
+                            results += `<p>${endpoint.name}: ${status === 'success' ? '✅ Connected' : '❌ Failed'} (Status: ${xhr.status})</p>`;
+                            completedTests++;
+                            
+                            if (completedTests === endpoints.length) {
+                                $('#network-result').html(results);
+                            }
+                        }
+                    });
+                });
+            });
+            
+            // Helper functions
+            function updateConnectionStatus(token) {
+                if (token) {
+                    $('#connection-status').text('Connected').removeClass('disconnected').addClass('connected');
+                    
+                    // Display token info
+                    const tokenParts = token.split('.');
+                    let tokenInfo = 'Token: ' + token.substring(0, 10) + '...' + token.substring(token.length - 5);
+                    
+                    $('#token-info').html(`<p>${tokenInfo}</p>`);
+                } else {
+                    $('#connection-status').text('Disconnected').removeClass('connected').addClass('disconnected');
+                    $('#token-info').html('<p>No token available</p>');
+                }
+            }
+            
+            function displayBrowserInfo() {
+                const browserInfo = `
+                    <p><strong>User Agent:</strong> ${navigator.userAgent}</p>
+                    <p><strong>Platform:</strong> ${navigator.platform}</p>
+                    <p><strong>Cookies Enabled:</strong> ${navigator.cookieEnabled ? 'Yes' : 'No'}</p>
+                    <p><strong>Language:</strong> ${navigator.language}</p>
+                    <p><strong>Online:</strong> ${navigator.onLine ? 'Yes' : 'No'}</p>
+                    <p><strong>Current URL:</strong> ${window.location.href}</p>
+                    <p><strong>Origin:</strong> ${window.location.origin}</p>
+                    <p><strong>Configured Redirect URI:</strong> http://127.0.0.1:5501/project/playlist/index.html</p>
+                `;
+                
+                $('#browser-info').html(browserInfo);
+            }
+        });
+    </script>
+</body>
+</html>

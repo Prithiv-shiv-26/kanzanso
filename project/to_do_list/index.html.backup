@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#062e3f">
+    <meta name="Description" content="A dynamic and aesthetic To-Do List WebApp.">
+
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="main.css"> 
+    <title>TO DO LIST</title>
+</head>
+
+<body>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <div id="header">
+        <div class="nav-container">
+            <a href="../features.html" class="back-button">← Back to Features</a>
+        </div>
+        <div class="flexrow-container">
+            <div class="standard-theme theme-selector"></div>
+            <div class="light-theme theme-selector"></div>
+            <div class="darker-theme theme-selector"></div>
+        </div>
+        <h1 id="title">To do List.<div id="border"></div></h1>
+    </div>
+
+    <div class="container">
+        <div id="form">
+            <form id="todo-form">
+                <input class="todo-input" type="text" placeholder="Add a task." required>
+                <input type="date" class="todo-date" placeholder="Select date">
+                <input type="time" class="todo-time" placeholder="Select time">
+                
+                <!-- Tag selection dropdown -->
+                <select class="todo-tag" id="todo-tag" required>
+                    <option value="">Select Tag</option>
+                    <option value="work">Work</option>
+                    <option value="personal">Personal</option>
+                    <option value="health">Health</option>
+                    <option value="education">Education</option>
+                    <option value="other">Other</option>
+                </select>
+                
+                <!-- Priority selection -->
+                <select class="todo-priority" id="todo-priority">
+                    <option value="0">Priority</option>
+                    <option value="1">Low</option>
+                    <option value="2">Medium</option>
+                    <option value="3">High</option>
+                </select>
+                
+                <button class="todo-btn" type="submit">I Got This!</button>
+            </form>
+
+            <p class="datetime-container"><span id="datetime"></span></p>
+        </div>
+
+        <!-- Filter controls -->
+        <div class="filter-container">
+            <div class="filter-group">
+                <label for="filter-tag">Filter by Tag:</label>
+                <select id="filter-tag">
+                    <option value="all">All Tags</option>
+                    <option value="work">Work</option>
+                    <option value="personal">Personal</option>
+                    <option value="health">Health</option>
+                    <option value="education">Education</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="filter-priority">Filter by Priority:</label>
+                <select id="filter-priority">
+                    <option value="all">All Priorities</option>
+                    <option value="1">Low</option>
+                    <option value="2">Medium</option>
+                    <option value="3">High</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="filter-status">Filter by Status:</label>
+                <select id="filter-status">
+                    <option value="all">All</option>
+                    <option value="active">Active</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Grid container for todos -->
+        <div class="todo-grid-container">
+            <!-- Todo items will be added here dynamically -->
+        </div>
+    </div>
+    
+    <!-- Edit Todo Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Task</h2>
+            <form id="edit-form">
+                <input type="hidden" id="edit-id">
+                <div class="form-group">
+                    <label for="edit-text">Task:</label>
+                    <input type="text" id="edit-text" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-date">Due Date:</label>
+                    <input type="date" id="edit-date">
+                </div>
+                <div class="form-group">
+                    <label for="edit-time">Due Time:</label>
+                    <input type="time" id="edit-time">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tag">Tag:</label>
+                    <select id="edit-tag">
+                        <option value="">None</option>
+                        <option value="work">Work</option>
+                        <option value="personal">Personal</option>
+                        <option value="health">Health</option>
+                        <option value="education">Education</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-priority">Priority:</label>
+                    <select id="edit-priority">
+                        <option value="0">None</option>
+                        <option value="1">Low</option>
+                        <option value="2">Medium</option>
+                        <option value="3">High</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-notes">Notes:</label>
+                    <textarea id="edit-notes" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="save-btn">Save Changes</button>
+                    <button type="button" class="cancel-btn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <footer>
+        <p style="font-size: 3em; font-family: 'Kaushan Script', cursive;">Kanzanso</p>
+        <p>the greatest treasure is you</p>
+    </footer>
+    
+    <!-- Include Axios for HTTP requests -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <!-- Include API and service scripts -->
+    <script src="../services/api.js"></script>
+    <script src="../services/todoService.js"></script>
+    
+    <script src="time.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,666 @@
+// Selectors
+const todoForm = document.getElementById('todo-form');
+const todoInput = document.querySelector('.todo-input');
+const todoDate = document.querySelector('.todo-date');
+const todoTime = document.querySelector('.todo-time');
+const todoTag = document.getElementById('todo-tag');
+const todoPriority = document.getElementById('todo-priority');
+const todoGridContainer = document.querySelector('.todo-grid-container');
+const filterTag = document.getElementById('filter-tag');
+const filterPriority = document.getElementById('filter-priority');
+const filterStatus = document.getElementById('filter-status');
+const editModal = document.getElementById('edit-modal');
+const editForm = document.getElementById('edit-form');
+const editId = document.getElementById('edit-id');
+const editText = document.getElementById('edit-text');
+const editDate = document.getElementById('edit-date');
+const editTime = document.getElementById('edit-time');
+const editTag = document.getElementById('edit-tag');
+const editPriority = document.getElementById('edit-priority');
+const editNotes = document.getElementById('edit-notes');
+const closeBtn = document.querySelector('.close');
+const cancelBtn = document.querySelector('.cancel-btn');
+const standardTheme = document.querySelector('.standard-theme');
+const lightTheme = document.querySelector('.light-theme');
+const darkerTheme = document.querySelector('.darker-theme');
+
+// Event Listeners
+todoForm.addEventListener('submit', addTodo);
+document.addEventListener("DOMContentLoaded", getTodos);
+standardTheme.addEventListener('click', () => changeTheme('standard'));
+lightTheme.addEventListener('click', () => changeTheme('light'));
+darkerTheme.addEventListener('click', () => changeTheme('darker'));
+filterTag.addEventListener('change', filterTodos);
+filterPriority.addEventListener('change', filterTodos);
+filterStatus.addEventListener('change', filterTodos);
+editForm.addEventListener('submit', saveEditedTodo);
+closeBtn.addEventListener('click', closeModal);
+cancelBtn.addEventListener('click', closeModal);
+
+// Check if one theme has been set previously and apply it (or std theme if not found):
+let savedTheme = localStorage.getItem('savedTheme');
+savedTheme === null ?
+    changeTheme('standard')
+    : changeTheme(localStorage.getItem('savedTheme'));
+
+// Flag to determine if we're using the backend or local storage
+let useBackend = false;
+
+// Check if we have a token (user is logged in)
+if (localStorage.getItem('token')) {
+    useBackend = true;
+    console.log('Using backend for todo storage');
+} else {
+    console.log('Using local storage for todo storage (not logged in)');
+}
+
+// Functions
+async function addTodo(event) {
+    // Prevents form from submitting / Prevents form from reloading
+    event.preventDefault();
+
+    if (todoInput.value === '') {
+        alert("You must write something!");
+        return;
+    }
+
+    const text = todoInput.value;
+    const date = todoDate.value;
+    const time = todoTime.value;
+    const tag = todoTag.value;
+    const priority = parseInt(todoPriority.value) || 0;
+
+    if (useBackend && window.todoService) {
+        try {
+            const userId = localStorage.getItem('userId') || 'current-user';
+            const todoData = {
+                text: text,
+                dueDate: date ? new Date(date + (time ? 'T' + time : 'T00:00:00')).toISOString() : null,
+                tags: tag ? [tag] : [],
+                priority: priority,
+                completed: false,
+                notes: ''
+            };
+            
+            const createdTodo = await todoService.createTodo(userId, todoData);
+            console.log('Todo saved to backend:', createdTodo);
+            
+            // Clear form inputs before refreshing todos to prevent duplicate submissions
+            todoInput.value = '';
+            todoDate.value = '';
+            todoTime.value = '';
+            todoTag.value = '';
+            todoPriority.value = '0';
+            
+            // Refresh todos
+            getTodos();
+        } catch (error) {
+            console.error('Failed to save todo to backend:', error);
+            // Fall back to local storage
+            saveToLocalStorage(text, date, time, tag, priority);
+            
+            // Clear form inputs
+            todoInput.value = '';
+            todoDate.value = '';
+            todoTime.value = '';
+            todoTag.value = '';
+            todoPriority.value = '0';
+            
+            renderTodos();
+        }
+    } else {
+        // Save to local storage
+        saveToLocalStorage(text, date, time, tag, priority);
+        
+        // Clear form inputs
+        todoInput.value = '';
+        todoDate.value = '';
+        todoTime.value = '';
+        todoTag.value = '';
+        todoPriority.value = '0';
+        
+        renderTodos();
+    }
+}
+
+// Save to local storage
+function saveToLocalStorage(text, date, time, tag, priority) {
+    let todos;
+    if (localStorage.getItem('todos') === null) {
+        todos = [];
+    } else {
+        todos = JSON.parse(localStorage.getItem('todos'));
+    }
+    
+    const newTodo = {
+        id: Date.now().toString(),
+        text: text,
+        date: date,
+        time: time,
+        tag: tag,
+        priority: priority,
+        completed: false,
+        notes: '',
+        createdAt: new Date().toISOString()
+    };
+    
+    todos.push(newTodo);
+    localStorage.setItem('todos', JSON.stringify(todos));
+}
+
+// Get todos from storage (backend or local)
+async function getTodos() {
+    try {
+        todoGridContainer.innerHTML = ''; // Clear existing todos
+        
+        let todos = [];
+        
+        if (useBackend && window.todoService) {
+            // Try to get todos from the backend
+            try {
+                const userId = localStorage.getItem('userId') || 'current-user';
+                todos = await todoService.getTodosByUserId(userId);
+                console.log('Loaded todos from backend:', todos);
+            } catch (error) {
+                console.error('Failed to load todos from backend:', error);
+                // Fall back to local storage
+                useBackend = false;
+                
+                // Show error message
+                showErrorMessage('Failed to load your tasks from the server. Using local data instead.');
+                
+                // Get todos from local storage as fallback
+                if (localStorage.getItem('todos') === null) {
+                    todos = [];
+                } else {
+                    todos = JSON.parse(localStorage.getItem('todos'));
+                }
+            }
+        } else {
+            // Get todos from local storage
+            if (localStorage.getItem('todos') === null) {
+                todos = [];
+            } else {
+                todos = JSON.parse(localStorage.getItem('todos'));
+            }
+        }
+
+        renderTodos(todos);
+    } catch (error) {
+        console.error('Failed to load todos:', error);
+        showErrorMessage('Failed to load your tasks. Please refresh the page to try again.');
+    }
+}
+
+// Render todos to the grid
+function renderTodos(todos = null) {
+    // Clear the container
+    todoGridContainer.innerHTML = '';
+    
+    // If todos not provided, get from local storage
+    if (!todos) {
+        if (localStorage.getItem('todos') === null) {
+            todos = [];
+        } else {
+            todos = JSON.parse(localStorage.getItem('todos'));
+        }
+    }
+    
+    // Apply filters
+    todos = filterTodosList(todos);
+    
+    // Sort todos by priority (high to low) and then by date
+    todos.sort((a, b) => {
+        // First by priority (high to low)
+        if ((b.priority || 0) - (a.priority || 0) !== 0) {
+            return (b.priority || 0) - (a.priority || 0);
+        }
+        
+        // Then by due date (if available)
+        const dateA = a.dueDate || a.date ? new Date(a.dueDate || (a.date + (a.time ? 'T' + a.time : 'T00:00:00'))) : new Date(0);
+        const dateB = b.dueDate || b.date ? new Date(b.dueDate || (b.date + (b.time ? 'T' + b.time : 'T00:00:00'))) : new Date(0);
+        
+        return dateA - dateB;
+    });
+    
+    // Create todo cards
+    todos.forEach(todo => {
+        createTodoCard(todo);
+    });
+    
+    // If no todos, show a message
+    if (todos.length === 0) {
+        const emptyMessage = document.createElement('div');
+        emptyMessage.classList.add('empty-message');
+        emptyMessage.textContent = 'No tasks found. Add a new task to get started!';
+        todoGridContainer.appendChild(emptyMessage);
+    }
+}
+
+// Create a todo card
+function createTodoCard(todo) {
+    const todoCard = document.createElement('div');
+    todoCard.classList.add('todo-card');
+    todoCard.dataset.id = todo.id || todo._id;
+    
+    if (todo.completed) {
+        todoCard.classList.add('completed');
+    }
+    
+    // Set card background color based on priority
+    if (todo.priority === 3) {
+        todoCard.style.borderLeft = '5px solid #f44336';
+    } else if (todo.priority === 2) {
+        todoCard.style.borderLeft = '5px solid #ffc107';
+    } else if (todo.priority === 1) {
+        todoCard.style.borderLeft = '5px solid #8bc34a';
+    }
+    
+    // Card header with tag
+    const todoHeader = document.createElement('div');
+    todoHeader.classList.add('todo-header');
+    
+    // Add tag if exists
+    if (todo.tags && todo.tags.length > 0 && todo.tags[0]) {
+        const todoTagEl = document.createElement('span');
+        todoTagEl.classList.add('todo-tag', todo.tags[0]);
+        todoTagEl.textContent = todo.tags[0].charAt(0).toUpperCase() + todo.tags[0].slice(1);
+        todoHeader.appendChild(todoTagEl);
+    } else if (todo.tag) {
+        const todoTagEl = document.createElement('span');
+        todoTagEl.classList.add('todo-tag', todo.tag);
+        todoTagEl.textContent = todo.tag.charAt(0).toUpperCase() + todo.tag.slice(1);
+        todoHeader.appendChild(todoTagEl);
+    }
+    
+    // Add priority indicator
+    if (todo.priority > 0) {
+        const todoPriorityEl = document.createElement('div');
+        todoPriorityEl.classList.add('todo-priority');
+        
+        const priorityIndicator = document.createElement('span');
+        priorityIndicator.classList.add('priority-indicator', `priority-${todo.priority}`);
+        
+        const priorityText = document.createElement('span');
+        priorityText.textContent = ['', 'Low', 'Medium', 'High'][todo.priority] + ' Priority';
+        
+        todoPriorityEl.appendChild(priorityIndicator);
+        todoPriorityEl.appendChild(priorityText);
+        todoHeader.appendChild(todoPriorityEl);
+    }
+    
+    todoCard.appendChild(todoHeader);
+    
+    // Todo text
+    const todoText = document.createElement('div');
+    todoText.classList.add('todo-text');
+    todoText.textContent = todo.text;
+    todoCard.appendChild(todoText);
+    
+    // Due date
+    if (todo.dueDate || (todo.date && todo.date !== '')) {
+        const todoDateEl = document.createElement('div');
+        todoDateEl.classList.add('todo-date');
+        
+        let dateStr;
+        if (todo.dueDate) {
+            const dueDate = new Date(todo.dueDate);
+            dateStr = `Due: ${dueDate.toLocaleDateString()} ${dueDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+        } else {
+            dateStr = `Due: ${todo.date} ${todo.time || ''}`;
+        }
+        
+        todoDateEl.textContent = dateStr;
+        todoCard.appendChild(todoDateEl);
+    }
+    
+    // Notes
+    if (todo.notes && todo.notes.trim() !== '') {
+        const todoNotes = document.createElement('div');
+        todoNotes.classList.add('todo-notes');
+        todoNotes.textContent = todo.notes;
+        todoCard.appendChild(todoNotes);
+    }
+    
+    // Action buttons
+    const todoActions = document.createElement('div');
+    todoActions.classList.add('todo-actions');
+    
+    // Complete button
+    const completeBtn = document.createElement('button');
+    completeBtn.innerHTML = '<i class="fas fa-check"></i>';
+    completeBtn.classList.add('todo-btn', 'complete-btn');
+    completeBtn.title = 'Mark as ' + (todo.completed ? 'incomplete' : 'complete');
+    completeBtn.addEventListener('click', () => toggleComplete(todo.id || todo._id));
+    todoActions.appendChild(completeBtn);
+    
+    // Edit button
+    const editBtn = document.createElement('button');
+    editBtn.innerHTML = '<i class="fas fa-edit"></i>';
+    editBtn.classList.add('todo-btn', 'edit-btn');
+    editBtn.title = 'Edit task';
+    editBtn.addEventListener('click', () => openEditModal(todo));
+    todoActions.appendChild(editBtn);
+    
+    // Delete button
+    const deleteBtn = document.createElement('button');
+    deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+    deleteBtn.classList.add('todo-btn', 'delete-btn');
+    deleteBtn.title = 'Delete task';
+    deleteBtn.addEventListener('click', () => deleteTodo(todo.id || todo._id));
+    todoActions.appendChild(deleteBtn);
+    
+    todoCard.appendChild(todoActions);
+    
+    todoGridContainer.appendChild(todoCard);
+}
+
+// Toggle todo completion status
+async function toggleComplete(id) {
+    // Check if id is undefined or null
+    if (!id) {
+        console.error('toggleComplete called with undefined id');
+        return;
+    }
+    
+    if (useBackend && window.todoService) {
+        try {
+            const userId = localStorage.getItem('userId') || 'current-user';
+            
+            // Get the current todo
+            const todo = await todoService.getTodoById(userId, id);
+            
+            // Toggle the completed status
+            todo.completed = !todo.completed;
+            
+            // Update the todo
+            await todoService.updateTodo(userId, id, todo);
+            
+            // Refresh todos
+            getTodos();
+        } catch (error) {
+            console.error('Failed to update todo completion status:', error);
+            // Fall back to local storage
+            toggleCompleteInLocalStorage(id);
+            renderTodos();
+        }
+    } else {
+        // Update in local storage
+        toggleCompleteInLocalStorage(id);
+        renderTodos();
+    }
+}
+
+// Toggle completion status in local storage
+function toggleCompleteInLocalStorage(id) {
+    let todos;
+    if (localStorage.getItem('todos') === null) {
+        todos = [];
+    } else {
+        todos = JSON.parse(localStorage.getItem('todos'));
+    }
+    
+    const todoIndex = todos.findIndex(todo => (todo.id || todo._id) === id);
+    if (todoIndex > -1) {
+        todos[todoIndex].completed = !todos[todoIndex].completed;
+        localStorage.setItem('todos', JSON.stringify(todos));
+    }
+}
+
+// Delete todo
+async function deleteTodo(id) {
+    // Check if id is undefined or null
+    if (!id) {
+        console.error('deleteTodo called with undefined id');
+        return;
+    }
+    
+    if (!confirm('Are you sure you want to delete this task?')) {
+        return;
+    }
+    
+    if (useBackend && window.todoService) {
+        try {
+            const userId = localStorage.getItem('userId') || 'current-user';
+            await todoService.deleteTodo(userId, id);
+            console.log('Todo deleted from backend:', id);
+            
+            // Refresh todos
+            getTodos();
+        } catch (error) {
+            console.error('Failed to delete todo from backend:', error);
+            // Fall back to local storage
+            deleteFromLocalStorage(id);
+            renderTodos();
+        }
+    } else {
+        // Delete from local storage
+        deleteFromLocalStorage(id);
+        renderTodos();
+    }
+}
+
+// Delete from local storage
+function deleteFromLocalStorage(id) {
+    let todos;
+    if (localStorage.getItem('todos') === null) {
+        todos = [];
+    } else {
+        todos = JSON.parse(localStorage.getItem('todos'));
+    }
+    
+    const todoIndex = todos.findIndex(todo => (todo.id || todo._id) === id);
+    if (todoIndex > -1) {
+        todos.splice(todoIndex, 1);
+        localStorage.setItem('todos', JSON.stringify(todos));
+    }
+}
+
+// Open edit modal
+function openEditModal(todo) {
+    // Populate form fields
+    editId.value = todo.id || todo._id;
+    editText.value = todo.text;
+    
+    // Handle date and time
+    if (todo.dueDate) {
+        const dueDate = new Date(todo.dueDate);
+        editDate.value = dueDate.toISOString().split('T')[0];
+        editTime.value = dueDate.toTimeString().slice(0, 5);
+    } else {
+        editDate.value = todo.date || '';
+        editTime.value = todo.time || '';
+    }
+    
+    // Handle tag
+    if (todo.tags && todo.tags.length > 0) {
+        editTag.value = todo.tags[0];
+    } else {
+        editTag.value = todo.tag || '';
+    }
+    
+    // Handle priority
+    editPriority.value = todo.priority || 0;
+    
+    // Handle notes
+    editNotes.value = todo.notes || '';
+    
+    // Show modal
+    editModal.style.display = 'block';
+}
+
+// Close edit modal
+function closeModal() {
+    editModal.style.display = 'none';
+}
+
+// Save edited todo
+async function saveEditedTodo(event) {
+    event.preventDefault();
+    
+    const id = editId.value;
+    const text = editText.value;
+    const date = editDate.value;
+    const time = editTime.value;
+    const tag = editTag.value;
+    const priority = parseInt(editPriority.value) || 0;
+    const notes = editNotes.value;
+    
+    if (useBackend && window.todoService) {
+        try {
+            const userId = localStorage.getItem('userId') || 'current-user';
+            
+            // Get the current todo to preserve other properties
+            const currentTodo = await todoService.getTodoById(userId, id);
+            
+            // Update the todo
+            const todoData = {
+                ...currentTodo,
+                text: text,
+                dueDate: date ? new Date(date + (time ? 'T' + time : 'T00:00:00')) : null,
+                tags: tag ? [tag] : [],
+                priority: priority,
+                notes: notes
+            };
+            
+            await todoService.updateTodo(userId, id, todoData);
+            console.log('Todo updated in backend:', todoData);
+            
+            // Close modal
+            closeModal();
+            
+            // Refresh todos
+            getTodos();
+        } catch (error) {
+            console.error('Failed to update todo in backend:', error);
+            // Fall back to local storage
+            updateInLocalStorage(id, text, date, time, tag, priority, notes);
+            closeModal();
+            renderTodos();
+        }
+    } else {
+        // Update in local storage
+        updateInLocalStorage(id, text, date, time, tag, priority, notes);
+        closeModal();
+        renderTodos();
+    }
+}
+
+// Update in local storage
+function updateInLocalStorage(id, text, date, time, tag, priority, notes) {
+    let todos;
+    if (localStorage.getItem('todos') === null) {
+        todos = [];
+    } else {
+        todos = JSON.parse(localStorage.getItem('todos'));
+    }
+    
+    const todoIndex = todos.findIndex(todo => (todo.id || todo._id) === id);
+    if (todoIndex > -1) {
+        todos[todoIndex].text = text;
+        todos[todoIndex].date = date;
+        todos[todoIndex].time = time;
+        todos[todoIndex].tag = tag;
+        todos[todoIndex].priority = priority;
+        todos[todoIndex].notes = notes;
+        localStorage.setItem('todos', JSON.stringify(todos));
+    }
+}
+
+// Filter todos
+function filterTodos() {
+    renderTodos();
+}
+
+// Apply filters to todos list
+function filterTodosList(todos) {
+    const tagFilter = filterTag.value;
+    const priorityFilter = filterPriority.value;
+    const statusFilter = filterStatus.value;
+    
+    return todos.filter(todo => {
+        // Filter by tag
+        if (tagFilter !== 'all') {
+            const todoTag = todo.tags && todo.tags.length > 0 ? todo.tags[0] : todo.tag;
+            if (todoTag !== tagFilter) {
+                return false;
+            }
+        }
+        
+        // Filter by priority
+        if (priorityFilter !== 'all') {
+            if (todo.priority !== parseInt(priorityFilter)) {
+                return false;
+            }
+        }
+        
+        // Filter by status
+        if (statusFilter === 'active' && todo.completed) {
+            return false;
+        }
+        if (statusFilter === 'completed' && !todo.completed) {
+            return false;
+        }
+        
+        return true;
+    });
+}
+
+// Show error message
+function showErrorMessage(message) {
+    // Check if error message already exists
+    let errorMsg = document.querySelector('.error-message');
+    
+    if (!errorMsg) {
+        // Create new error message
+        errorMsg = document.createElement('div');
+        errorMsg.classList.add('error-message');
+        document.querySelector('#form').appendChild(errorMsg);
+    }
+    
+    errorMsg.textContent = message;
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        errorMsg.remove();
+    }, 5000);
+}
+
+// Change theme function
+function changeTheme(color) {
+    localStorage.setItem('savedTheme', color);
+    savedTheme = localStorage.getItem('savedTheme');
+
+    document.body.className = color;
+    
+    // Update title class for darker theme
+    color === 'darker' ?
+        document.getElementById('title').classList.add('darker-title')
+        : document.getElementById('title').classList.remove('darker-title');
+
+    // Update input classes
+    document.querySelectorAll('input').forEach(input => {
+        input.className = input.className.replace(/standard-input|light-input|darker-input/g, '');
+        input.classList.add(`${color}-input`);
+    });
+    
+    // Update select classes
+    document.querySelectorAll('select').forEach(select => {
+        select.className = select.className.replace(/standard-input|light-input|darker-input/g, '');
+        select.classList.add(`${color}-input`);
+    });
+
+    // Update button classes
+    document.querySelectorAll('button:not(.todo-btn)').forEach(button => {
+        button.className = button.className.replace(/standard-button|light-button|darker-button/g, '');
+        button.classList.add(`${color}-button`);
+    });
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target === editModal) {
+        closeModal();
+    }
+};
+

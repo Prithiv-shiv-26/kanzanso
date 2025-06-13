@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .test-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            min-height: 20px;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>API Connectivity Test</h1>
+    
+    <div class="test-section">
+        <h2>1. Basic Connection Test</h2>
+        <button id="testConnectionBtn">Test Basic Connection</button>
+        <div id="connectionResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. User Endpoints Test</h2>
+        <button id="testUsersBtn">Test Users Endpoint</button>
+        <div id="usersResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Todo Endpoints Test</h2>
+        <button id="testTodosBtn">Test Todos Endpoint</button>
+        <div id="todosResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. CORS Test</h2>
+        <button id="testCorsBtn">Test CORS Configuration</button>
+        <div id="corsResult" class="result"></div>
+    </div>
+
+    <script>
+        // Configure axios
+        const API_BASE_URL = 'http://localhost:8080/api';
+        
+        // Basic connection test
+        document.getElementById('testConnectionBtn').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('connectionResult');
+            resultDiv.innerHTML = 'Testing connection...';
+            resultDiv.className = 'result';
+            
+            try {
+                const response = await axios.get(`${API_BASE_URL}/todos`, { timeout: 5000 });
+                resultDiv.innerHTML = `
+                    <p class="success">✅ Connection successful!</p>
+                    <p>Status: ${response.status}</p>
+                    <p>Server is reachable and responding.</p>
+                `;
+            } catch (error) {
+                handleError(error, resultDiv);
+            }
+        });
+        
+        // Test users endpoint
+        document.getElementById('testUsersBtn').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('usersResult');
+            resultDiv.innerHTML = 'Testing users endpoint...';
+            resultDiv.className = 'result';
+            
+            try {
+                const response = await axios.get(`${API_BASE_URL}/users`, { timeout: 5000 });
+                resultDiv.innerHTML = `
+                    <p class="success">✅ Users endpoint working!</p>
+                    <p>Status: ${response.status}</p>
+                    <p>Response data: ${JSON.stringify(response.data).substring(0, 100)}...</p>
+                `;
+            } catch (error) {
+                handleError(error, resultDiv);
+            }
+        });
+        
+        // Test todos endpoint
+        document.getElementById('testTodosBtn').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('todosResult');
+            resultDiv.innerHTML = 'Testing todos endpoint...';
+            resultDiv.className = 'result';
+            
+            try {
+                const response = await axios.get(`${API_BASE_URL}/todos`, { timeout: 5000 });
+                resultDiv.innerHTML = `
+                    <p class="success">✅ Todos endpoint working!</p>
+                    <p>Status: ${response.status}</p>
+                    <p>Response data: ${JSON.stringify(response.data).substring(0, 100)}...</p>
+                `;
+            } catch (error) {
+                handleError(error, resultDiv);
+            }
+        });
+        
+        // Test CORS
+        document.getElementById('testCorsBtn').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('corsResult');
+            resultDiv.innerHTML = 'Testing CORS configuration...';
+            resultDiv.className = 'result';
+            
+            try {
+                const response = await axios.options(`${API_BASE_URL}/todos`, { timeout: 5000 });
+                
+                // Check CORS headers
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': response.headers['access-control-allow-origin'],
+                    'Access-Control-Allow-Methods': response.headers['access-control-allow-methods'],
+                    'Access-Control-Allow-Headers': response.headers['access-control-allow-headers']
+                };
+                
+                resultDiv.innerHTML = `
+                    <p class="success">✅ CORS appears to be configured correctly!</p>
+                    <p>Status: ${response.status}</p>
+                    <p>CORS Headers:</p>
+                    <pre>${JSON.stringify(corsHeaders, null, 2)}</pre>
+                `;
+            } catch (error) {
+                // For OPTIONS requests, some servers might not respond as expected
+                if (error.response && error.response.headers) {
+                    const corsHeaders = {
+                        'Access-Control-Allow-Origin': error.response.headers['access-control-allow-origin'],
+                        'Access-Control-Allow-Methods': error.response.headers['access-control-allow-methods'],
+                        'Access-Control-Allow-Headers': error.response.headers['access-control-allow-headers']
+                    };
+                    
+                    if (corsHeaders['Access-Control-Allow-Origin']) {
+                        resultDiv.innerHTML = `
+                            <p class="success">✅ CORS headers found in response!</p>
+                            <p>Status: ${error.response.status}</p>
+                            <p>CORS Headers:</p>
+                            <pre>${JSON.stringify(corsHeaders, null, 2)}</pre>
+                        `;
+                        return;
+                    }
+                }
+                
+                handleError(error, resultDiv);
+            }
+        });
+        
+        // Helper function to handle errors
+        function handleError(error, resultDiv) {
+            resultDiv.className = 'result error';
+            
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                resultDiv.innerHTML = `
+                    <p>❌ Error: Server responded with an error</p>
+                    <p>Status: ${error.response.status}</p>
+                    <p>Status Text: ${error.response.statusText}</p>
+                    <p>Response Data: ${JSON.stringify(error.response.data)}</p>
+                    <p>This suggests the API endpoint exists but returned an error.</p>
+                `;
+            } else if (error.request) {
+                // The request was made but no response was received
+                resultDiv.innerHTML = `
+                    <p>❌ Error: No response received from server</p>
+                    <p>This could indicate:</p>
+                    <ul>
+                        <li>The server is not running</li>
+                        <li>The server is running but not accessible at the specified URL</li>
+                        <li>A network issue is preventing the connection</li>
+                        <li>CORS is not properly configured</li>
+                    </ul>
+                    <p>Check that your backend server is running at ${API_BASE_URL}</p>
+                `;
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                resultDiv.innerHTML = `
+                    <p>❌ Error: ${error.message}</p>
+                    <p>This is likely a client-side issue with the request configuration.</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

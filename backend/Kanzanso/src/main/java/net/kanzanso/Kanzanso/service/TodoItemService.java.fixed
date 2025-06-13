@@ -1,0 +1,222 @@
+package net.kanzanso.Kanzanso.service;
+
+import net.kanzanso.Kanzanso.dto.TodoItemDTO;
+import net.kanzanso.Kanzanso.mapper.TodoItemMapper;
+import net.kanzanso.Kanzanso.model.TodoItem;
+import net.kanzanso.Kanzanso.model.User;
+import net.kanzanso.Kanzanso.repository.TodoItemRepository;
+import net.kanzanso.Kanzanso.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+public class TodoItemService {
+
+    private static final Logger logger = LoggerFactory.getLogger(TodoItemService.class);
+
+    private final TodoItemRepository todoItemRepository;
+    private final UserRepository userRepository;
+    private final TodoItemMapper todoItemMapper;
+
+    @Autowired
+    public TodoItemService(TodoItemRepository todoItemRepository, UserRepository userRepository, TodoItemMapper todoItemMapper) {
+        this.todoItemRepository = todoItemRepository;
+        this.userRepository = userRepository;
+        this.todoItemMapper = todoItemMapper;
+    }
+
+    @Transactional
+    public TodoItemDTO createTodoItem(String userId, TodoItemDTO todoItemDTO) {
+        logger.info("Creating todo item for user {}: {}", userId, todoItemDTO);
+        
+        // Verify user exists or create a demo user
+        User user = findOrCreateUser(userId);
+
+        // Convert DTO to entity
+        TodoItem todoItem = todoItemMapper.toEntity(todoItemDTO);
+        
+        // Set additional fields
+        todoItem.setUserId(userId);
+        todoItem.setCreatedAt(LocalDateTime.now());
+        todoItem.setUpdatedAt(LocalDateTime.now());
+        
+        // Set default values for fields that might be null
+        if (todoItem.getTags() == null) {
+            todoItem.setTags(new ArrayList<>());
+        }
+        
+        if (todoItem.getPriority() <= 0) {
+            todoItem.setPriority(1); // Default to low priority
+        }
+        
+        if (todoItem.getNotes() == null) {
+            todoItem.setNotes("");
+        }
+
+        logger.info("Saving todo item: {}", todoItem);
+        TodoItem savedTodoItem = todoItemRepository.save(todoItem);
+        logger.info("Todo item saved with ID: {}", savedTodoItem.getId());
+
+        // Update user's todoIds list
+        if (user.getTodoIds() == null) {
+            user.setTodoIds(new ArrayList<>());
+        }
+        
+        if (!user.getTodoIds().contains(savedTodoItem.getId())) {
+            user.getTodoIds().add(savedTodoItem.getId());
+            userRepository.save(user);
+            logger.info("Updated user's todoIds list: {}", user.getTodoIds());
+        }
+
+        return todoItemMapper.toDto(savedTodoItem);
+    }
+
+    public List<TodoItemDTO> getTodoItemsByUserId(String userId) {
+        logger.info("Getting todo items for user {}", userId);
+        
+        // Verify user exists or create a demo user
+        findOrCreateUser(userId);
+
+        List<TodoItem> todoItems = todoItemRepository.findByUserId(userId);
+        logger.info("Found {} todo items for user {}", todoItems.size(), userId);
+        
+        return todoItems.stream()
+                .map(todoItemMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public TodoItemDTO getTodoItemById(String userId, String todoItemId) {
+        logger.info("Getting todo item {} for user {}", todoItemId, userId);
+        
+        TodoItem todoItem = todoItemRepository.findById(todoItemId)
+                .orElseThrow(() -> new IllegalArgumentException("Todo item not found"));
+
+        // Verify the todo item belongs to the user
+        if (!todoItem.getUserId().equals(userId)) {
+            throw new IllegalArgumentException("Todo item does not belong to the user");
+        }
+
+        return todoItemMapper.toDto(todoItem);
+    }
+
+    @Transactional
+    public TodoItemDTO updateTodoItem(String userId, String todoItemId, TodoItemDTO todoItemDTO) {
+        logger.info("Updating todo item {} for user {}: {}", todoItemId, userId, todoItemDTO);
+        
+        TodoItem todoItem = todoItemRepository.findById(todoItemId)
+                .orElseThrow(() -> new IllegalArgumentException("Todo item not found"));
+
+        // Verify the todo item belongs to the user
+        if (!todoItem.getUserId().equals(userId)) {
+            throw new IllegalArgumentException("Todo item does not belong to the user");
+        }
+
+        // Update entity from DTO
+        todoItemMapper.updateEntityFromDto(todoItemDTO, todoItem);
+        todoItem.setUpdatedAt(LocalDateTime.now());
+        
+        // Set default values for fields that might be null
+        if (todoItem.getTags() == null) {
+            todoItem.setTags(new ArrayList<>());
+        }
+        
+        if (todoItem.getPriority() <= 0) {
+            todoItem.setPriority(1); // Default to low priority
+        }
+        
+        if (todoItem.getNotes() == null) {
+            todoItem.setNotes("");
+        }
+
+        TodoItem updatedTodoItem = todoItemRepository.save(todoItem);
+        logger.info("Todo item updated: {}", updatedTodoItem);
+
+        return todoItemMapper.toDto(updatedTodoItem);
+    }
+
+    @Transactional
+    public void deleteTodoItem(String userId, String todoItemId) {
+        logger.info("Deleting todo item {} for user {}", todoItemId, userId);
+        
+        // Check if the todo item exists
+        TodoItem todoItem = todoItemRepository.findById(todoItemId)
+                .orElseThrow(() -> new IllegalArgumentException("Todo item not found"));
+
+        // Verify the todo item belongs to the user
+        if (!todoItem.getUserId().equals(userId)) {
+            throw new IllegalArgumentException("Todo item does not belong to the user");
+        }
+
+        // Find the user and update their todoIds list
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            
+            // Initialize todoIds list if it's null
+            if (user.getTodoIds() == null) {
+                user.setTodoIds(new ArrayList<>());
+            } else {
+                // Remove the todo item ID from the user's todoIds list
+                user.getTodoIds().remove(todoItemId);
+            }
+            
+            userRepository.save(user);
+            logger.info("Updated user's todoIds list: {}", user.getTodoIds());
+        } else {
+            logger.warn("User {} not found when deleting todo item {}", userId, todoItemId);
+            // Continue with deletion even if user is not found
+        }
+
+        // Delete the todo item
+        todoItemRepository.deleteById(todoItemId);
+        logger.info("Todo item {} deleted successfully", todoItemId);
+    }
+    
+    // Helper method to find or create a user
+    private User findOrCreateUser(String userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            
+            // Initialize lists if they're null
+            if (user.getTodoIds() == null) {
+                user.setTodoIds(new ArrayList<>());
+                userRepository.save(user);
+                logger.info("Initialized todoIds list for user {}", userId);
+            }
+            
+            return user;
+        } else {
+            logger.info("User {} not found, creating demo user", userId);
+            
+            // Create a demo user
+            User demoUser = new User();
+            demoUser.setId(userId);
+            demoUser.setName("Demo User");
+            demoUser.setEmail("demo@example.com");
+            demoUser.setPassword("password123"); // In a real app, this would be hashed
+            demoUser.setCreatedAt(LocalDateTime.now());
+            demoUser.setUpdatedAt(LocalDateTime.now());
+            demoUser.setTodoIds(new ArrayList<>());
+            demoUser.setJournalEntryIds(new ArrayList<>());
+            demoUser.setStreakIds(new ArrayList<>());
+            demoUser.setQuizResultIds(new ArrayList<>());
+            demoUser.setPlaylistIds(new ArrayList<>());
+            
+            User savedUser = userRepository.save(demoUser);
+            logger.info("Created demo user: {}", savedUser);
+            
+            return savedUser;
+        }
+    }
+}

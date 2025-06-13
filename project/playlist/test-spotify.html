@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Integration Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #1DB954;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        button {
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #1ed760;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .result {
+            margin-top: 10px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+        .status {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .status.connected {
+            color: #1DB954;
+        }
+        .status.disconnected {
+            color: #e74c3c;
+        }
+    </style>
+    <!-- jQuery -->
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+    
+    <!-- Spotify Service -->
+    <script src="../services/spotifyService.js"></script>
+</head>
+<body>
+    <h1>Spotify Integration Test</h1>
+    <p>Use this page to test the Spotify integration for Kanzanso.</p>
+    
+    <div class="card">
+        <h2>Connection Status</h2>
+        <div id="connection-status" class="status disconnected">Disconnected</div>
+        <button id="connect-button">Connect to Spotify</button>
+        <button id="disconnect-button">Disconnect</button>
+    </div>
+    
+    <div class="card">
+        <h2>User Profile</h2>
+        <button id="get-profile-button">Get User Profile</button>
+        <div id="profile-result" class="result"></div>
+    </div>
+    
+    <div class="card">
+        <h2>Mood-Based Recommendations</h2>
+        <button id="get-happy-button">Happy</button>
+        <button id="get-sad-button">Sad</button>
+        <button id="get-nervous-button">Nervous</button>
+        <button id="get-love-button">Love</button>
+        <button id="get-focus-button">Focus</button>
+        <button id="get-energetic-button">Energetic</button>
+        <div id="recommendations-result" class="result"></div>
+    </div>
+    
+    <div class="card">
+        <h2>Search</h2>
+        <input type="text" id="search-input" placeholder="Enter search query">
+        <button id="search-button">Search</button>
+        <div id="search-result" class="result"></div>
+    </div>
+    
+    <div class="card">
+        <h2>Playback</h2>
+        <button id="play-button">Play</button>
+        <button id="pause-button">Pause</button>
+        <button id="next-button">Next</button>
+        <button id="previous-button">Previous</button>
+        <div>
+            <label for="volume-slider">Volume:</label>
+            <input type="range" id="volume-slider" min="0" max="100" value="50">
+        </div>
+        <div id="playback-result" class="result"></div>
+    </div>
+    
+    <script>
+        // Initialize Spotify service
+        $(document).ready(function() {
+            // Initialize the Spotify service
+            spotifyService.init();
+            
+            // Update connection status
+            updateConnectionStatus();
+            
+            // Connect button
+            $('#connect-button').click(function() {
+                spotifyService.authorize();
+            });
+            
+            // Disconnect button
+            $('#disconnect-button').click(function() {
+                spotifyService.logout();
+                updateConnectionStatus();
+                $('#profile-result').html('');
+                $('#recommendations-result').html('');
+                $('#search-result').html('');
+                $('#playback-result').html('');
+            });
+            
+            // Get user profile
+            $('#get-profile-button').click(async function() {
+                if (!spotifyService.state.accessToken) {
+                    $('#profile-result').html('<p>Please connect to Spotify first</p>');
+                    return;
+                }
+                
+                try {
+                    const profile = await spotifyService.getUserProfile();
+                    $('#profile-result').html(`
+                        <p><strong>Name:</strong> ${profile.display_name}</p>
+                        <p><strong>Email:</strong> ${profile.email}</p>
+                        <p><strong>Country:</strong> ${profile.country}</p>
+                        <p><strong>Spotify URI:</strong> ${profile.uri}</p>
+                        <img src="${profile.images[0]?.url || 'https://via.placeholder.com/100'}" alt="${profile.display_name}" width="100">
+                    `);
+                } catch (error) {
+                    $('#profile-result').html(`<p>Error: ${error.message}</p>`);
+                }
+            });
+            
+            // Get recommendations by mood
+            $('#get-happy-button, #get-sad-button, #get-nervous-button, #get-love-button, #get-focus-button, #get-energetic-button').click(async function() {
+                if (!spotifyService.state.accessToken) {
+                    $('#recommendations-result').html('<p>Please connect to Spotify first</p>');
+                    return;
+                }
+                
+                const mood = $(this).attr('id').replace('get-', '').replace('-button', '');
+                
+                try {
+                    $('#recommendations-result').html('<p>Loading recommendations...</p>');
+                    const recommendations = await spotifyService.getRecommendationsByMood(mood, 5);
+                    
+                    let html = `<h3>${mood.charAt(0).toUpperCase() + mood.slice(1)} Recommendations</h3><ul>`;
+                    
+                    recommendations.tracks.forEach(track => {
+                        html += `
+                            <li>
+                                <strong>${track.name}</strong> by ${track.artists.map(a => a.name).join(', ')}
+                                <button class="play-track-button" data-uri="${track.uri}">Play</button>
+                            </li>
+                        `;
+                    });
+                    
+                    html += '</ul>';
+                    
+                    $('#recommendations-result').html(html);
+                    
+                    // Add event listeners to play buttons
+                    $('.play-track-button').click(function() {
+                        const uri = $(this).data('uri');
+                        playTrack(uri);
+                    });
+                } catch (error) {
+                    $('#recommendations-result').html(`<p>Error: ${error.message}</p>`);
+                }
+            });
+            
+            // Search
+            $('#search-button').click(async function() {
+                if (!spotifyService.state.accessToken) {
+                    $('#search-result').html('<p>Please connect to Spotify first</p>');
+                    return;
+                }
+                
+                const query = $('#search-input').val();
+                
+                if (!query) {
+                    $('#search-result').html('<p>Please enter a search query</p>');
+                    return;
+                }
+                
+                try {
+                    $('#search-result').html('<p>Searching...</p>');
+                    const results = await spotifyService.search(query, 'track', 5);
+                    
+                    let html = `<h3>Search Results for "${query}"</h3><ul>`;
+                    
+                    results.tracks.items.forEach(track => {
+                        html += `
+                            <li>
+                                <strong>${track.name}</strong> by ${track.artists.map(a => a.name).join(', ')}
+                                <button class="play-track-button" data-uri="${track.uri}">Play</button>
+                            </li>
+                        `;
+                    });
+                    
+                    html += '</ul>';
+                    
+                    $('#search-result').html(html);
+                    
+                    // Add event listeners to play buttons
+                    $('.play-track-button').click(function() {
+                        const uri = $(this).data('uri');
+                        playTrack(uri);
+                    });
+                } catch (error) {
+                    $('#search-result').html(`<p>Error: ${error.message}</p>`);
+                }
+            });
+            
+            // Playback controls
+            $('#play-button').click(function() {
+                if (!spotifyService.state.accessToken || !spotifyService.state.deviceId) {
+                    $('#playback-result').html('<p>Please connect to Spotify first</p>');
+                    return;
+                }
+                
+                spotifyService.resumePlayback()
+                    .then(() => {
+                        $('#playback-result').html('<p>Playback resumed</p>');
+                    })
+                    .catch(error => {
+                        $('#playback-result').html(`<p>Error: ${error.message}</p>`);
+                    });
+            });
+            
+            $('#pause-button').click(function() {
+                if (!spotifyService.state.accessToken || !spotifyService.state.deviceId) {
+                    $('#playback-result').html('<p>Please connect to Spotify first</p>');
+                    return;
+                }
+                
+                spotifyService.pausePlayback()
+                    .then(() => {
+                        $('#playback-result').html('<p>Playback paused</p>');
+                    })
+                    .catch(error => {
+                        $('#playback-result').html(`<p>Error: ${error.message}</p>`);
+                    });
+            });
+            
+            $('#next-button').click(function() {
+                if (!spotifyService.state.accessToken || !spotifyService.state.deviceId) {
+                    $('#playback-result').html('<p>Please connect to Spotify first</p>');
+                    return;
+                }
+                
+                spotifyService.skipToNext()
+                    .then(() => {
+                        $('#playback-result').html('<p>Skipped to next track</p>');
+                    })
+                    .catch(error => {
+                        $('#playback-result').html(`<p>Error: ${error.message}</p>`);
+                    });
+            });
+            
+            $('#previous-button').click(function() {
+                if (!spotifyService.state.accessToken || !spotifyService.state.deviceId) {
+                    $('#playback-result').html('<p>Please connect to Spotify first</p>');
+                    return;
+                }
+                
+                spotifyService.skipToPrevious()
+                    .then(() => {
+                        $('#playback-result').html('<p>Skipped to previous track</p>');
+                    })
+                    .catch(error => {
+                        $('#playback-result').html(`<p>Error: ${error.message}</p>`);
+                    });
+            });
+            
+            $('#volume-slider').on('input', function() {
+                if (!spotifyService.state.accessToken || !spotifyService.state.deviceId) {
+                    $('#playback-result').html('<p>Please connect to Spotify first</p>');
+                    return;
+                }
+                
+                const volume = $(this).val();
+                
+                spotifyService.setVolume(volume)
+                    .then(() => {
+                        $('#playback-result').html(`<p>Volume set to ${volume}%</p>`);
+                    })
+                    .catch(error => {
+                        $('#playback-result').html(`<p>Error: ${error.message}</p>`);
+                    });
+            });
+            
+            // Helper functions
+            function updateConnectionStatus() {
+                if (spotifyService.state.accessToken) {
+                    $('#connection-status').text('Connected').removeClass('disconnected').addClass('connected');
+                } else {
+                    $('#connection-status').text('Disconnected').removeClass('connected').addClass('disconnected');
+                }
+            }
+            
+            function playTrack(uri) {
+                if (!spotifyService.state.accessToken || !spotifyService.state.deviceId) {
+                    $('#playback-result').html('<p>Please connect to Spotify first</p>');
+                    return;
+                }
+                
+                spotifyService.playTrack(uri)
+                    .then(() => {
+                        $('#playback-result').html('<p>Playing track</p>');
+                    })
+                    .catch(error => {
+                        $('#playback-result').html(`<p>Error: ${error.message}</p>`);
+                    });
+            }
+            
+            // Listen for player ready event
+            document.addEventListener('spotify-player-ready', (event) => {
+                console.log('Spotify player ready with device ID:', event.detail.deviceId);
+                updateConnectionStatus();
+            });
+            
+            // Listen for player state changes
+            document.addEventListener('spotify-player-state-changed', (event) => {
+                const state = event.detail;
+                const track = state.track_window.current_track;
+                
+                $('#playback-result').html(`
+                    <p><strong>Now Playing:</strong> ${track.name} by ${track.artists.map(a => a.name).join(', ')}</p>
+                    <p><strong>Status:</strong> ${state.paused ? 'Paused' : 'Playing'}</p>
+                    <img src="${track.album.images[0].url}" alt="${track.name}" width="100">
+                `);
+            });
+        });
+    </script>
+</body>
+</html>

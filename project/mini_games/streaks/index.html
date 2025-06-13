@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini games and streaks</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #e8f5e9, #c8e6c9);
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #9e72e0;
+            color: white;
+            padding: 25px;
+            text-align: center;
+            font-size: 2.5em;
+            letter-spacing: 1px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            position: relative; /* Make the header position relative to place the button */
+        }
+        .logout-btn {
+            position: absolute;
+            right: 10px;
+            top: 80%;
+            transform: translateY(-50%);
+            background-color: #ff4081;
+            color: white;
+            padding: 4px 12px;
+            font-size: 0.4em;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: #f50057;
+        }
+
+        nav {
+            background: light rgb(11, 11, 55);
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+        }
+        nav a {
+            text-decoration: none;
+            color: #272235;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: color 0.3s ease, transform 0.2s;
+        }
+        nav a:hover {
+            color: rgb(91, 191, 209);
+            transform: scale(1.1);
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            width: 90%;
+            margin: 40px auto;
+        }
+        .section {
+            background: rgb(206, 237, 252);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .section:hover {
+            transform: translateY(-5px);
+        }
+        .section h2 {
+            font-size: 2em;
+            color: #29164a;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        ul li {
+            background: #1a1740;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+        ul li:hover {
+            background-color: #565e60;
+        }
+        ul li span {
+            font-size: 2em;
+        }
+        a {
+            text-decoration: none;
+            font-weight: bold;
+            color: #ffffff;
+        }
+        a:hover {
+            color: #232433;
+        }
+        footer {
+            margin-top: 40px;
+            background: #1f1a36;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 1.2em;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="section">
+            <h2 style="font-size: 3em; font-family: 'Kaushan Script', cursive;">Mini Games</h2>
+            <ul>
+                <li><a href="breath.html" >Breathe & Relax: Breathing Exercises Game</a></li>
+                <li><a href="color.html">Paint: color your stress away</a></li>
+                <li><a href="../../daily_boost/index.html">Daily Boost: Personalized Micro-Challenges</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section">
+            <h2 style="font-size: 3em; font-family: 'Kaushan Script', cursive;">Self-Care Challenges/Streaks</h2>
+            <ul>
+                <li>
+                    <span>📝</span>
+                    <strong>30-Day Journaling Challenge</strong>: Write a daily journal entry to reflect on your thoughts, emotions, or just jot down something you're grateful for.
+                </li>
+                <li>
+                    <span>🚶‍♀️</span>
+                    <strong>10,000 Steps a Day for a Week</strong>: Set yourself a daily goal of 10,000 steps for a week—perfect for boosting both your mood and your health.
+                </li>
+                <li>
+                    <span>📚</span>
+                    <strong>Read One Book a Month</strong>: Dive into a new book each month and experience different worlds, stories, and perspectives.
+                </li>
+                <li>
+                    <span>💧</span>
+                    <strong>Stay Hydrated</strong>: Aim to drink 8 glasses of water daily. Staying hydrated is one of the easiest ways to feel better!
+                </li>
+                <li>
+                    <span>💤</span>
+                    <strong>Consistent Sleep Schedule for 10 Days</strong>: Commit to a regular sleep schedule for 10 days and feel more energized and rested.
+                </li>
+            </ul>
+        </div>
+
+    <footer style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <p style="font-size: 3em; font-family: 'Kaushan Script', cursive;">Kanzanso</p>
+        <p style="margin-bottom: 0; font-size: 1em; color: rgb(255, 252, 252); font-family: cursive; display: block;">the greatest treasure is you</p>
+    </footer>
+</body>
+</html>

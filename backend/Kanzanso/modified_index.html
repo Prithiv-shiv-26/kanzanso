@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List | Kanzanso</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="enhanced-link.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body class="standard">
+    <div class="container">
+        <header>
+            <div class="back-container">
+                <a href="../features.html" class="back-button">← Back to Features</a>
+            </div>
+            <div class="flexrow-container">
+                <div class="standard-theme theme-selector"></div>
+                <div class="light-theme theme-selector"></div>
+            </div>
+            <h1>To-Do List</h1>
+            <div class="filter-container">
+                <div class="filter-group">
+                    <label for="filter-tag">Filter by Tag:</label>
+                    <select id="filter-tag">
+                        <option value="">All Tags</option>
+                        <option value="work">Work</option>
+                        <option value="personal">Personal</option>
+                        <option value="health">Health</option>
+                        <option value="education">Education</option>
+                        <option value="finance">Finance</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-priority">Filter by Priority:</label>
+                    <select id="filter-priority">
+                        <option value="">All Priorities</option>
+                        <option value="1">Low</option>
+                        <option value="2">Medium</option>
+                        <option value="3">High</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filter-status">Filter by Status:</label>
+                    <select id="filter-status">
+                        <option value="">All</option>
+                        <option value="active">Active</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+        
+        <form id="todo-form">
+            <div class="form-group">
+                <input type="text" class="todo-input" placeholder="Add a task...">
+                <button type="submit" class="todo-button">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="todo-date">Due Date:</label>
+                    <input type="date" class="todo-date" id="todo-date">
+                </div>
+                <div class="form-group">
+                    <label for="todo-time">Time:</label>
+                    <input type="time" class="todo-time" id="todo-time">
+                </div>
+                <div class="form-group">
+                    <label for="todo-tag">Tag:</label>
+                    <select id="todo-tag">
+                        <option value="">Select Tag</option>
+                        <option value="work">Work</option>
+                        <option value="personal">Personal</option>
+                        <option value="health">Health</option>
+                        <option value="education">Education</option>
+                        <option value="finance">Finance</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="todo-priority">Priority:</label>
+                    <select id="todo-priority">
+                        <option value="1">Low</option>
+                        <option value="2">Medium</option>
+                        <option value="3">High</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+        
+        <div class="todo-grid-container">
+            <!-- Todo items will be added here dynamically -->
+        </div>
+    </div>
+    
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Task</h2>
+            <form id="edit-form">
+                <input type="hidden" id="edit-id">
+                <div class="form-group">
+                    <label for="edit-text">Task:</label>
+                    <input type="text" id="edit-text" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-date">Due Date:</label>
+                    <input type="date" id="edit-date">
+                </div>
+                <div class="form-group">
+                    <label for="edit-time">Time:</label>
+                    <input type="time" id="edit-time">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tag">Tag:</label>
+                    <select id="edit-tag">
+                        <option value="">Select Tag</option>
+                        <option value="work">Work</option>
+                        <option value="personal">Personal</option>
+                        <option value="health">Health</option>
+                        <option value="education">Education</option>
+                        <option value="finance">Finance</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-priority">Priority:</label>
+                    <select id="edit-priority">
+                        <option value="1">Low</option>
+                        <option value="2">Medium</option>
+                        <option value="3">High</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-notes">Notes:</label>
+                    <textarea id="edit-notes" rows="4"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn">Cancel</button>
+                    <button type="submit" class="save-btn">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- API Service Script -->
+    <script src="api_service.js"></script>
+    <!-- Main Script -->
+    <script src="main.js"></script>
+</body>
+</html>

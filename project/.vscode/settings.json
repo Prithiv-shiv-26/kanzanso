@@ -1,0 +1,6 @@
+{
+    "liveServer.settings.port": 5501,
+    "zencoder.enableRepoIndexing": true,
+    "liveServer.settings.file": "home.html",
+    "liveServer.settings.root": "/project"
+}

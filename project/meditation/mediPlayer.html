@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="mediPlayer.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Guided Meditation - Kanzanso</title>
+</head>
+<body>
+    <div class="nav-container">
+        <a href="index.html" class="back-button">
+            <i class="fas fa-arrow-left"></i> Back to Meditation
+        </a>
+    </div>
+
+    <div class="meditation-header">
+        <h1>Guided Breathing</h1>
+        <p class="meditation-subtitle">Follow the circle and breathe with the rhythm</p>
+    </div>
+
+    <div class="container" id="container">
+        <div class="circle"></div>
+        <p id="text"></p>
+        <div class="pointer-container">
+            <span class="pointer"></span>
+        </div>
+        <div class="gradient-circle"></div>
+    </div>
+
+    <div class="controls-container">
+        <div class="audio-player">
+            <audio id="meditation-audio" src="assets/intersteller.mp3" loop></audio>
+            <div class="audio-controls">
+                <button id="play-pause-btn" class="control-button">
+                    <i class="fas fa-play" id="play-icon"></i>
+                    <span id="play-text">Play Music</span>
+                </button>
+                <div class="volume-container">
+                    <i class="fas fa-volume-up"></i>
+                    <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.7">
+                </div>
+            </div>
+        </div>
+
+        <div class="meditation-controls">
+            <button id="restart-btn" class="control-button">
+                <i class="fas fa-redo-alt"></i> Restart
+            </button>
+            <div class="speed-control">
+                <label for="speed-selector">Breathing Speed:</label>
+                <select id="speed-selector">
+                    <option value="slow">Slow</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="fast">Fast</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="meditation-tips">
+        <h3>Tips for Better Meditation</h3>
+        <ul>
+            <li>Find a quiet, comfortable place to sit</li>
+            <li>Keep your back straight but not stiff</li>
+            <li>Focus on your breath, not your thoughts</li>
+            <li>Be patient and gentle with yourself</li>
+        </ul>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

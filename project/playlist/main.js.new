@@ -1,0 +1,306 @@
+/**
+ * Mood-based Music Player using Spotify
+ */
+
+// Initialize the Spotify service when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize the Spotify service
+    spotifyService.init();
+    
+    // Check if we have an access token
+    if (!spotifyService.state.accessToken) {
+        // Show login button if no token
+        showLoginUI();
+    } else {
+        // Show player UI if we have a token
+        showPlayerUI();
+        
+        // Load user profile
+        loadUserProfile();
+    }
+    
+    // Listen for player ready event
+    document.addEventListener('spotify-player-ready', (event) => {
+        console.log('Spotify player ready with device ID:', event.detail.deviceId);
+        
+        // Enable mood buttons
+        enableMoodButtons();
+        
+        // Show player controls
+        showPlayerControls();
+    });
+    
+    // Listen for player state changes
+    document.addEventListener('spotify-player-state-changed', (event) => {
+        updatePlayerUI(event.detail);
+    });
+    
+    // Listen for track ended event
+    document.addEventListener('spotify-track-ended', () => {
+        // Play another song from the same mood
+        if (currentMood) {
+            getASong(currentMood);
+        }
+    });
+});
+
+// Current mood
+let currentMood = null;
+
+/**
+ * Show login UI
+ */
+function showLoginUI() {
+    // Create login container
+    const loginContainer = document.createElement('div');
+    loginContainer.className = 'login-container';
+    loginContainer.innerHTML = `
+        <div class="login-card">
+            <h2>Connect to Spotify</h2>
+            <p>Connect your Spotify account to listen to mood-based music recommendations.</p>
+            <button id="login-button" class="spotify-button">Connect to Spotify</button>
+        </div>
+    `;
+    
+    // Add login container to the page
+    document.querySelector('.container').appendChild(loginContainer);
+    
+    // Add event listener to login button
+    document.getElementById('login-button').addEventListener('click', () => {
+        spotifyService.authorize();
+    });
+    
+    // Hide player UI
+    document.querySelector('.cards-list').style.display = 'none';
+    document.querySelector('.row.padding').style.display = 'none';
+}
+
+/**
+ * Show player UI
+ */
+function showPlayerUI() {
+    // Show mood cards and player
+    document.querySelector('.cards-list').style.display = 'flex';
+    document.querySelector('.row.padding').style.display = 'block';
+    
+    // Remove login UI if it exists
+    const loginContainer = document.querySelector('.login-container');
+    if (loginContainer) {
+        loginContainer.remove();
+    }
+}
+
+/**
+ * Load user profile
+ */
+async function loadUserProfile() {
+    try {
+        const profile = await spotifyService.getUserProfile();
+        
+        // Create user profile element
+        const userProfile = document.createElement('div');
+        userProfile.className = 'user-profile';
+        userProfile.innerHTML = `
+            <div class="user-info">
+                <img src="${profile.images[0]?.url || 'https://via.placeholder.com/40'}" alt="${profile.display_name}" class="user-avatar">
+                <span class="user-name">${profile.display_name}</span>
+            </div>
+            <button id="logout-button" class="logout-button">Logout</button>
+        `;
+        
+        // Add user profile to the page
+        document.querySelector('.container').prepend(userProfile);
+        
+        // Add event listener to logout button
+        document.getElementById('logout-button').addEventListener('click', () => {
+            spotifyService.logout();
+            window.location.reload();
+        });
+    } catch (error) {
+        console.error('Error loading user profile:', error);
+    }
+}
+
+/**
+ * Enable mood buttons
+ */
+function enableMoodButtons() {
+    // Add additional moods
+    addAdditionalMoods();
+}
+
+/**
+ * Add additional mood cards
+ */
+function addAdditionalMoods() {
+    const cardsList = document.querySelector('.cards-list');
+    
+    // Add focus mood
+    const focusCard = document.createElement('button');
+    focusCard.className = 'card card-focus';
+    focusCard.setAttribute('onclick', "getASong('focus')");
+    focusCard.setAttribute('aria-label', 'Play focus mood music');
+    focusCard.innerHTML = `
+        <div class="card_image">
+            <img src="https://img.freepik.com/free-vector/focused-tiny-people-reading-books_74855-5836.jpg" alt="Focus mood illustration">
+        </div>
+        <div class="card_title title-black">
+            <p>Focus Mode</p>
+        </div>
+    `;
+    
+    // Add energetic mood
+    const energeticCard = document.createElement('button');
+    energeticCard.className = 'card card-energetic';
+    energeticCard.setAttribute('onclick', "getASong('energetic')");
+    energeticCard.setAttribute('aria-label', 'Play energetic mood music');
+    energeticCard.innerHTML = `
+        <div class="card_image">
+            <img src="https://img.freepik.com/free-vector/happy-people-dancing-flat-illustration_74855-5212.jpg" alt="Energetic mood illustration">
+        </div>
+        <div class="card_title title-black">
+            <p>Energetic</p>
+        </div>
+    `;
+    
+    // Add cards to the list
+    cardsList.appendChild(focusCard);
+    cardsList.appendChild(energeticCard);
+}
+
+/**
+ * Show player controls
+ */
+function showPlayerControls() {
+    // Create player controls
+    const playerControls = document.createElement('div');
+    playerControls.className = 'player-controls';
+    playerControls.innerHTML = `
+        <div class="now-playing">
+            <img id="current-track-image" src="https://via.placeholder.com/80" alt="Album cover">
+            <div class="track-info">
+                <div id="current-track-name">Select a mood to start playing</div>
+                <div id="current-track-artist">-</div>
+            </div>
+        </div>
+        <div class="controls">
+            <button id="previous-button" class="control-button" aria-label="Previous track">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+            </button>
+            <button id="play-pause-button" class="control-button" aria-label="Play or pause">
+                <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+            </button>
+            <button id="next-button" class="control-button" aria-label="Next track">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+            </button>
+        </div>
+        <div class="volume-control">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+            <input type="range" id="volume-slider" min="0" max="100" value="50" aria-label="Volume">
+        </div>
+    `;
+    
+    // Add player controls to the page
+    document.querySelector('.row.padding').appendChild(playerControls);
+    
+    // Add event listeners to player controls
+    document.getElementById('play-pause-button').addEventListener('click', togglePlayPause);
+    document.getElementById('previous-button').addEventListener('click', playPrevious);
+    document.getElementById('next-button').addEventListener('click', playNext);
+    document.getElementById('volume-slider').addEventListener('input', changeVolume);
+}
+
+/**
+ * Update player UI based on player state
+ * @param {Object} state - Spotify player state
+ */
+function updatePlayerUI(state) {
+    if (!state) return;
+    
+    const currentTrack = state.track_window.current_track;
+    const isPlaying = !state.paused;
+    
+    // Update track info
+    document.getElementById('current-track-name').textContent = currentTrack.name;
+    document.getElementById('current-track-artist').textContent = currentTrack.artists.map(artist => artist.name).join(', ');
+    document.getElementById('current-track-image').src = currentTrack.album.images[0].url;
+    
+    // Update play/pause button
+    document.getElementById('play-icon').style.display = isPlaying ? 'none' : 'block';
+    document.getElementById('pause-icon').style.display = isPlaying ? 'block' : 'none';
+    
+    // Update iframe
+    document.getElementById('embed-uri').src = `https://open.spotify.com/embed/track/${currentTrack.id}`;
+}
+
+/**
+ * Toggle play/pause
+ */
+async function togglePlayPause() {
+    if (spotifyService.state.isPlaying) {
+        await spotifyService.pausePlayback();
+    } else {
+        await spotifyService.resumePlayback();
+    }
+}
+
+/**
+ * Play previous track
+ */
+async function playPrevious() {
+    await spotifyService.skipToPrevious();
+}
+
+/**
+ * Play next track
+ */
+async function playNext() {
+    await spotifyService.skipToNext();
+}
+
+/**
+ * Change volume
+ */
+async function changeVolume() {
+    const volume = document.getElementById('volume-slider').value;
+    await spotifyService.setVolume(volume);
+}
+
+/**
+ * Get a song based on mood
+ * @param {string} mood - The mood to get a song for
+ */
+async function getASong(mood) {
+    try {
+        // Save current mood
+        currentMood = mood;
+        
+        // Show loading state
+        document.getElementById('current-track-name').textContent = 'Loading...';
+        document.getElementById('current-track-artist').textContent = '';
+        
+        // Get recommendations
+        const recommendations = await spotifyService.getRecommendationsByMood(mood);
+        
+        // Get a random track from the recommendations
+        const randomIndex = Math.floor(Math.random() * recommendations.tracks.length);
+        const track = recommendations.tracks[randomIndex];
+        
+        // Play the track
+        await spotifyService.playTrack(track.uri);
+        
+        // Update the iframe
+        document.getElementById('embed-uri').src = `https://open.spotify.com/embed/track/${track.id}`;
+        
+        console.log('Playing track:', track.name, 'by', track.artists[0].name);
+    } catch (error) {
+        console.error('Error getting a song:', error);
+        
+        // Check if token expired
+        if (error.message && error.message.includes('token')) {
+            alert('Your Spotify session has expired. Please log in again.');
+            spotifyService.authorize();
+        }
+    }
+}

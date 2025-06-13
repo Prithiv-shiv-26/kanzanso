@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Mood Music Player</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Mood-based music player" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../assets/img/8.png" />
+    <link href="style.css" rel="stylesheet" />
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css"
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <header>
+        <div class="header-nav">
+          <a href="../features.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Features
+          </a>
+        </div>
+        <h1>Mood-Based Music Player</h1>
+        <p>Select a mood to explore music recommendations</p>
+        <div class="spotify-connect">
+          <button id="connect-spotify" class="spotify-button">
+            <i class="fab fa-spotify"></i> <span id="spotify-button-text">Connect to Spotify</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="cards-list">
+      <button class="card card-happy"
+           onclick="showPlaceholderPlaylist('happy')"
+           aria-label="Show happy mood music">
+        <div class="card_image">
+          <img
+            src="https://i.pinimg.com/736x/7d/d6/94/7dd694ae4a5c128d4495a34974865a5d.jpg"
+            alt="Happy mood illustration"
+          />
+        </div>
+        <div class="card_title title-black">
+          <p>Happy Mood</p>
+        </div>
+      </button>
+
+      <button class="card card-sad"
+           onclick="showPlaceholderPlaylist('sad')"
+           aria-label="Show sad mood music">
+        <div class="card_image">
+          <img
+            src="https://media.istockphoto.com/vectors/young-sad-girl-sitting-and-unhappy-hugging-her-knees-vector-id1152645476?k=20&m=1152645476&s=612x612&w=0&h=5FfxMPOxr7TDV-ETsVjgTsZwDtTNbhuXjwkvAlFM40U="
+            alt="Sad mood illustration"
+          />
+        </div>
+        <div class="card_title title-black">
+          <p>Sad Mood</p>
+        </div>
+      </button>
+
+      <button class="card card-nervous"
+           onclick="showPlaceholderPlaylist('nervous')"
+           aria-label="Show nervous mood music">
+        <div class="card_image">
+          <img
+            src="https://static.vecteezy.com/system/resources/previews/004/646/497/original/depressed-girl-with-anxiety-and-scary-fantasies-feeling-sorrow-fears-sadness-illustration-vector.jpg"
+            alt="Nervous mood illustration"
+          />
+        </div>
+        <div class="card_title">
+          <p>Feeling Nervous</p>
+        </div>
+      </button>
+
+      <button class="card card-love"
+           onclick="showPlaceholderPlaylist('love')"
+           aria-label="Show love mood music">
+        <div class="card_image">
+          <img
+            src="https://cdni.iconscout.com/illustration/premium/thumb/girl-feeling-love-4884322-4064575.png"
+            alt="Love mood illustration"
+          />
+        </div>
+        <div class="card_title title-black">
+          <p>Feeling Loved</p>
+        </div>
+      </button>
+
+      <button class="card card-focus"
+           onclick="showPlaceholderPlaylist('focus')"
+           aria-label="Show focus mood music">
+        <div class="card_image">
+          <img
+            src="https://img.freepik.com/free-vector/focused-tiny-people-reading-books_74855-5836.jpg"
+            alt="Focus mood illustration"
+          />
+        </div>
+        <div class="card_title title-black">
+          <p>Focus Mode</p>
+        </div>
+      </button>
+
+      <button class="card card-energetic"
+           onclick="showPlaceholderPlaylist('energetic')"
+           aria-label="Show energetic mood music">
+        <div class="card_image">
+          <img
+            src="https://img.freepik.com/free-vector/happy-people-dancing-flat-illustration_74855-5212.jpg"
+            alt="Energetic mood illustration"
+          />
+        </div>
+        <div class="card_title title-black">
+          <p>Energetic</p>
+        </div>
+      </button>
+    </div>
+
+    <div class="row padding">
+      <div class="contender">
+        <div id="playlist-container" class="playlist-container">
+          <h2 id="playlist-title">Select a mood to see recommendations</h2>
+          <div id="playlist-songs" class="playlist-songs">
+            <!-- Songs will be displayed here -->
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>Music recommendations based on your mood</p>
+        <p><a href="../features.html">Back to Features</a></p>
+      </footer>
+    </div>
+
+    <!-- Player UI -->
+    <div class="player-container" id="player-container">
+      <div class="player-info">
+        <div class="now-playing-cover" id="now-playing-cover">
+          <i class="fas fa-music"></i>
+        </div>
+        <div class="now-playing-details">
+          <div class="now-playing-title" id="now-playing-title">Not Playing</div>
+          <div class="now-playing-artist" id="now-playing-artist">Select a track to play</div>
+        </div>
+      </div>
+      <div class="player-controls">
+        <button id="player-prev" class="player-button">
+          <i class="fas fa-step-backward"></i>
+        </button>
+        <button id="player-play" class="player-button player-play-button">
+          <i class="fas fa-play" id="player-play-icon"></i>
+        </button>
+        <button id="player-next" class="player-button">
+          <i class="fas fa-step-forward"></i>
+        </button>
+      </div>
+      <div class="player-status">
+        <div class="player-status-text" id="player-status-text">
+          <span class="player-status-icon"><i class="fas fa-info-circle"></i></span>
+          <span>Connect to Spotify to play music</span>
+        </div>
+      </div>
+    </div>
+
+    <script src="../services/spotifyService.js"></script>
+    <script>
+      // State
+      let currentMood = null;
+      let currentTracks = [];
+      let currentTrackIndex = -1;
+
+      // DOM Elements
+      const connectSpotifyBtn = document.getElementById('connect-spotify');
+      const spotifyButtonText = document.getElementById('spotify-button-text');
+      const playlistTitle = document.getElementById('playlist-title');
+      const playlistSongs = document.getElementById('playlist-songs');
+
+      // Player elements
+      const playerContainer = document.getElementById('player-container');
+      const nowPlayingCover = document.getElementById('now-playing-cover');
+      const nowPlayingTitle = document.getElementById('now-playing-title');
+      const nowPlayingArtist = document.getElementById('now-playing-artist');
+      const playerPlayBtn = document.getElementById('player-play');
+      const playerPlayIcon = document.getElementById('player-play-icon');
+      const playerPrevBtn = document.getElementById('player-prev');
+      const playerNextBtn = document.getElementById('player-next');
+      const playerStatusText = document.getElementById('player-status-text');
+
+      // Initialize Spotify service
+      document.addEventListener('DOMContentLoaded', function() {
+        spotifyService.init();
+        updateSpotifyConnectionUI();
+
+        // Event listeners
+        connectSpotifyBtn.addEventListener('click', function() {
+          if (spotifyService.isLoggedIn()) {
+            spotifyService.logout();
+            updateSpotifyConnectionUI();
+            showStatusMessage('Disconnected from Spotify', 'info');
+          } else {
+            // Direct Spotify authorization
+            try {
+              console.log('Attempting to connect to Spotify...');
+
+              // Create a direct Spotify authorization URL
+              const clientId = 'e1f17bfd17864dfd9870756724c49362';
+              const redirectUri = encodeURIComponent('http://127.0.0.1:5500/project/playlist/callback.html');
+              const scopes = encodeURIComponent('streaming user-read-email user-read-private user-modify-playback-state user-read-playback-state user-library-read user-library-modify playlist-read-private playlist-read-collaborative');
+
+              // Add a state parameter for security
+              const state = Math.random().toString(36).substring(2, 15);
+              localStorage.setItem('spotify_auth_state', state);
+
+              // Build the authorization URL with all parameters
+              // Using Authorization Code Flow (response_type=code) instead of Implicit Grant Flow (response_type=token)
+              const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&scope=${scopes}&state=${state}&show_dialog=true`;
+
+              // Log the full URL for debugging
+              console.log('Client ID:', clientId);
+              console.log('Redirect URI:', redirectUri);
+              console.log('Full authorization URL:', authUrl);
+              window.location.href = authUrl;
+            } catch (error) {
+              console.error('Error connecting to Spotify:', error);
+              showStatusMessage('Failed to connect to Spotify: ' + error.message, 'error');
+            }
+          }
+        });
+
+        // Player controls
+        playerPlayBtn.addEventListener('click', togglePlayback);
+        playerPrevBtn.addEventListener('click', playPreviousTrack);
+        playerNextBtn.addEventListener('click', playNextTrack);
+      });
+
+      // Function to update Spotify connection UI
+      function updateSpotifyConnectionUI() {
+        // Check if we're using a fake token
+        const token = localStorage.getItem('spotify_access_token');
+        const usingFakeToken = token && token.startsWith('fake_');
+
+        if (spotifyService.isLoggedIn()) {
+          spotifyButtonText.textContent = 'Disconnect';
+          connectSpotifyBtn.classList.add('connected');
+
+          if (usingFakeToken) {
+            playerStatusText.innerHTML = `
+              <span class="player-status-icon"><i class="fas fa-info-circle"></i></span>
+              <span>Using simulated Spotify connection</span>
+            `;
+            playerStatusText.className = 'player-status-text info';
+          } else {
+            playerStatusText.innerHTML = `
+              <span class="player-status-icon"><i class="fas fa-check-circle"></i></span>
+              <span>Connected to Spotify</span>
+            `;
+            playerStatusText.className = 'player-status-text success';
+          }
+        } else {
+          spotifyButtonText.textContent = 'Connect to Spotify';
+          connectSpotifyBtn.classList.remove('connected');
+          playerStatusText.innerHTML = `
+            <span class="player-status-icon"><i class="fas fa-info-circle"></i></span>
+            <span>Connect to Spotify to play music</span>
+          `;
+          playerStatusText.className = 'player-status-text';
+        }
+      }
+
+      // These functions are no longer needed since we're using direct Spotify authentication
+      // and handling fake tokens directly in the UI
+
+      // Function to show placeholder playlist
+      async function showPlaceholderPlaylist(mood) {
+        currentMood = mood;
+
+        // Update title
+        playlistTitle.textContent = `${mood.charAt(0).toUpperCase() + mood.slice(1)} Mood Playlist`;
+
+        // Clear previous songs
+        playlistSongs.innerHTML = '';
+
+        // Add loading indicator
+        playlistSongs.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading songs...</div>';
+
+        try {
+          // Get recommendations from Spotify service
+          const recommendations = await spotifyService.getRecommendationsByMood(mood);
+
+          // Process tracks
+          if (recommendations._placeholder) {
+            // Using placeholder data
+            currentTracks = recommendations.tracks.map(track => ({
+              id: `placeholder-${Math.random().toString(36).substring(2, 9)}`,
+              name: track.name,
+              artists: track.artists.map(a => a.name).join(', '),
+              album: track.album.name,
+              isPlaceholder: true
+            }));
+          } else {
+            // Using real Spotify data
+            currentTracks = recommendations.tracks.map(track => spotifyService.formatTrack(track));
+          }
+
+          // Clear loading indicator
+          playlistSongs.innerHTML = '';
+
+          // Add songs to the playlist
+          currentTracks.forEach((track, index) => {
+            const songElement = document.createElement('div');
+            songElement.className = 'playlist-song';
+            songElement.setAttribute('data-index', index);
+            songElement.innerHTML = `
+              <div class="song-number">${index + 1}</div>
+              <div class="song-info">
+                <div class="song-title">${track.name}</div>
+                <div class="song-artist">${track.artists}</div>
+              </div>
+              <div class="song-actions">
+                <button class="play-button" data-index="${index}">
+                  <i class="fas fa-play"></i>
+                </button>
+              </div>
+            `;
+            playlistSongs.appendChild(songElement);
+          });
+
+          // Add event listeners to play buttons and song items
+          const playButtons = document.querySelectorAll('.play-button');
+          playButtons.forEach(button => {
+            button.addEventListener('click', function() {
+              const index = parseInt(this.getAttribute('data-index'));
+              playTrack(index);
+            });
+          });
+
+          const songItems = document.querySelectorAll('.playlist-song');
+          songItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+              // Don't trigger if clicking the play button
+              if (e.target.closest('.play-button')) return;
+
+              const index = parseInt(this.getAttribute('data-index'));
+              selectTrack(index);
+            });
+          });
+        } catch (error) {
+          console.error('Error loading playlist:', error);
+          playlistSongs.innerHTML = `
+            <div class="error-state">
+              <i class="fas fa-exclamation-circle"></i>
+              <p>Error loading recommendations. Please try again later.</p>
+            </div>
+          `;
+        }
+      }
+
+      // Function to select a track
+      function selectTrack(index) {
+        // Update UI to show selected track
+        document.querySelectorAll('.playlist-song').forEach((item, i) => {
+          if (i === index) {
+            item.classList.add('selected');
+          } else {
+            item.classList.remove('selected');
+          }
+        });
+
+        // Update player UI
+        const track = currentTracks[index];
+        if (track) {
+          nowPlayingTitle.textContent = track.name;
+          nowPlayingArtist.textContent = track.artists;
+
+          if (track.albumArt) {
+            nowPlayingCover.innerHTML = `<img src="${track.albumArt}" alt="${track.album}">`;
+          } else {
+            nowPlayingCover.innerHTML = `<i class="fas fa-music"></i>`;
+          }
+
+          currentTrackIndex = index;
+        }
+      }
+
+      // Function to play a track
+      function playTrack(index) {
+        selectTrack(index);
+
+        const track = currentTracks[index];
+        if (!track) return;
+
+        if (!spotifyService.isLoggedIn()) {
+          showStatusMessage('Please connect to Spotify to play tracks', 'warning');
+          return;
+        }
+
+        // Check if we're using a fake token
+        const token = localStorage.getItem('spotify_access_token');
+        const usingFakeToken = token && token.startsWith('fake_');
+
+        if (track.isPlaceholder || usingFakeToken) {
+          // For placeholder tracks or when using fake token, just show a message
+          showStatusMessage(`Simulating playback: ${track.name} by ${track.artists}`, 'info');
+
+          // Update play button to show pause icon
+          playerPlayIcon.className = 'fas fa-pause';
+          return;
+        }
+
+        // In a real implementation, this would play the track using Spotify Web Playback SDK
+        showStatusMessage(`Playing: ${track.name} by ${track.artists}`, 'success');
+
+        // Update play button to show pause icon
+        playerPlayIcon.className = 'fas fa-pause';
+      }
+
+      // Function to toggle playback
+      function togglePlayback() {
+        if (currentTrackIndex === -1) {
+          // No track selected, play the first one
+          if (currentTracks.length > 0) {
+            playTrack(0);
+          }
+          return;
+        }
+
+        // Toggle between play and pause
+        if (playerPlayIcon.className.includes('play')) {
+          // Currently showing play icon, change to pause
+          playerPlayIcon.className = 'fas fa-pause';
+          showStatusMessage(`Playing: ${currentTracks[currentTrackIndex].name}`, 'success');
+        } else {
+          // Currently showing pause icon, change to play
+          playerPlayIcon.className = 'fas fa-play';
+          showStatusMessage('Paused', 'info');
+        }
+      }
+
+      // Function to play previous track
+      function playPreviousTrack() {
+        if (currentTracks.length === 0) return;
+
+        let newIndex = currentTrackIndex - 1;
+        if (newIndex < 0) {
+          newIndex = currentTracks.length - 1; // Wrap around to the last track
+        }
+
+        playTrack(newIndex);
+      }
+
+      // Function to play next track
+      function playNextTrack() {
+        if (currentTracks.length === 0) return;
+
+        let newIndex = currentTrackIndex + 1;
+        if (newIndex >= currentTracks.length) {
+          newIndex = 0; // Wrap around to the first track
+        }
+
+        playTrack(newIndex);
+      }
+
+      // Function to show status message
+      function showStatusMessage(message, type = 'info') {
+        const iconMap = {
+          success: 'fas fa-check-circle',
+          warning: 'fas fa-exclamation-triangle',
+          error: 'fas fa-exclamation-circle',
+          info: 'fas fa-info-circle'
+        };
+
+        playerStatusText.innerHTML = `
+          <span class="player-status-icon"><i class="${iconMap[type] || iconMap.info}"></i></span>
+          <span>${message}</span>
+        `;
+
+        playerStatusText.className = `player-status-text ${type}`;
+
+        // Reset class after a delay
+        setTimeout(() => {
+          playerStatusText.className = 'player-status-text';
+        }, 3000);
+      }
+    </script>
+  </body>
+</html>

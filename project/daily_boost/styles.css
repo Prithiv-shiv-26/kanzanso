@@ -1,0 +1,772 @@
+:root {
+    --primary-color: #5cb8d1;
+    --secondary-color: #ee0979;
+    --accent-color: #4CAF50;
+    --text-dark: #0f0e0e;
+    --text-light: #666666;
+    --background-light: #deecf9;
+    --background-white: #ffffff;
+    --shadow: rgba(0, 0, 0, 0.1);
+    --border-radius: 16px;
+    --transition: all 0.3s ease;
+
+    /* Pastel colors for cards */
+    --journal-color: #FFD6E0;
+    --mood-color: #FFEFB5;
+    --todo-color: #C1E1C1;
+    --quiz-color: #C4E0F9;
+    --playlist-color: #D4C1EC;
+    --meditation-color: #B5EAD7;
+    --quote-color: #FFC8DD;
+
+    --insight-bg: #f8f9fa;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: var(--background-light);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+header, footer {
+    text-align: center;
+    padding: 2rem 0;
+    background-color: var(--background-white);
+    box-shadow: 0 2px 5px var(--shadow);
+    position: relative;
+}
+
+.header-nav {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+.back-link i {
+    margin-right: 5px;
+}
+
+.back-link:hover {
+    color: var(--primary-color);
+}
+
+header h1 {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.tagline {
+    color: var(--text-light);
+    font-style: italic;
+}
+
+main {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+#daily-boost-container {
+    background-color: var(--background-white);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 15px var(--shadow);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 1.8rem;
+    color: var(--text-dark);
+    margin: 2rem 0 0.5rem;
+    text-align: center;
+}
+
+.section-description {
+    color: var(--text-light);
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+/* Stats Section */
+.daily-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    background-color: #f9f9f9;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    flex: 1;
+    min-width: 120px;
+}
+
+.stat-circle {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 1rem;
+}
+
+.circular-chart {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.circle-bg {
+    fill: none;
+    stroke: #eee;
+    stroke-width: 3.8;
+}
+
+.circle {
+    fill: none;
+    stroke-width: 2.8;
+    stroke-linecap: round;
+    stroke: var(--accent-color);
+    animation: progress 1s ease-out forwards;
+}
+
+@keyframes progress {
+    0% {
+        stroke-dasharray: 0 100;
+    }
+}
+
+.percentage {
+    fill: var(--text-dark);
+    font-size: 0.5em;
+    text-anchor: middle;
+    font-weight: bold;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.stat-item p {
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+/* Filter Container */
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: var(--background-white);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 150px;
+}
+
+.filter-group label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    color: var(--text-light);
+}
+
+.filter-select {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    cursor: pointer;
+}
+
+.filter-button {
+    align-self: flex-end;
+    padding: 0.5rem 1rem;
+    background-color: var(--background-white);
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-button:hover {
+    background-color: #f1f1f1;
+    color: var(--text-dark);
+}
+
+.filter-button i {
+    font-size: 0.8rem;
+}
+
+/* Challenges Grid */
+.challenges-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.challenge-card {
+    background-color: var(--background-white);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 12px var(--shadow);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+}
+
+.challenge-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.challenge-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.challenge-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: white;
+    background-color: var(--primary-color);
+}
+
+.challenge-category {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-light);
+}
+
+.challenge-difficulty {
+    display: flex;
+    gap: 3px;
+    color: #ffc107;
+}
+
+.challenge-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    color: var(--text-dark);
+}
+
+.challenge-description {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+}
+
+.challenge-progress {
+    margin-bottom: 1rem;
+}
+
+.progress-bar {
+    height: 8px;
+    background-color: #f1f1f1;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--accent-color);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    text-align: right;
+}
+
+.challenge-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.action-button {
+    flex: 1;
+    min-width: 80px;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.action-button:hover {
+    background-color: #4a9cb3;
+}
+
+.action-button i {
+    margin-right: 5px;
+}
+
+.add-todo-btn {
+    background-color: #6c757d;
+}
+
+.add-todo-btn:hover {
+    background-color: #5a6268;
+}
+
+.complete-btn {
+    background-color: var(--accent-color);
+}
+
+.complete-btn:hover {
+    background-color: #3e8e41;
+}
+
+.complete-btn:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Completed challenge styling */
+.challenge-card.completed {
+    opacity: 0.8;
+}
+
+.challenge-card.completed::after {
+    content: '✓';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background-color: var(--accent-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    color: var(--text-dark);
+}
+
+.card-description {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+}
+
+.card-button {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 30px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.card-button:hover {
+    background-color: #4a9cb3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Card Type Specific Styles */
+.journal-card {
+    background-color: var(--journal-color);
+}
+
+.journal-card .card-icon {
+    background-color: #ff6b95;
+}
+
+.journal-card .card-button {
+    background-color: #ff6b95;
+}
+
+.journal-card .card-button:hover {
+    background-color: #e05a80;
+}
+
+.mood-card {
+    background-color: var(--mood-color);
+}
+
+.mood-card .card-icon {
+    background-color: #ffc107;
+}
+
+.mood-card .card-button {
+    background-color: #ffc107;
+    color: var(--text-dark);
+}
+
+.mood-card .card-button:hover {
+    background-color: #e0a800;
+}
+
+.todo-card {
+    background-color: var(--todo-color);
+}
+
+.todo-card .card-icon {
+    background-color: #4CAF50;
+}
+
+.todo-card .card-button {
+    background-color: #4CAF50;
+}
+
+.todo-card .card-button:hover {
+    background-color: #3e8e41;
+}
+
+.quiz-card {
+    background-color: var(--quiz-color);
+}
+
+.quiz-card .card-icon {
+    background-color: #2196F3;
+}
+
+.quiz-card .card-button {
+    background-color: #2196F3;
+}
+
+.quiz-card .card-button:hover {
+    background-color: #0b7dda;
+}
+
+.playlist-card {
+    background-color: var(--playlist-color);
+}
+
+.playlist-card .card-icon {
+    background-color: #9c27b0;
+}
+
+.playlist-card .card-button {
+    background-color: #9c27b0;
+}
+
+.playlist-card .card-button:hover {
+    background-color: #7b1fa2;
+}
+
+.meditation-card {
+    background-color: var(--meditation-color);
+}
+
+.meditation-card .card-icon {
+    background-color: #009688;
+}
+
+.meditation-card .card-button {
+    background-color: #009688;
+}
+
+.meditation-card .card-button:hover {
+    background-color: #00796b;
+}
+
+.quote-card {
+    background-color: var(--quote-color);
+}
+
+.quote-card .card-icon {
+    background-color: #e91e63;
+}
+
+.quote-card .card-button {
+    background-color: #e91e63;
+}
+
+.quote-card .card-button:hover {
+    background-color: #c1134e;
+}
+
+.loading-spinner {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-light);
+    grid-column: 1 / -1;
+}
+
+.loading-spinner i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+/* Insights Section */
+.insights-container {
+    margin-top: 3rem;
+}
+
+.insights-carousel {
+    display: flex;
+    overflow-x: auto;
+    padding: 1rem 0;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    gap: 1.5rem;
+}
+
+.insights-carousel::-webkit-scrollbar {
+    height: 8px;
+}
+
+.insights-carousel::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.insights-carousel::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+}
+
+.insights-carousel::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+}
+
+.insight-card {
+    flex: 0 0 300px;
+    background-color: var(--insight-bg);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px var(--shadow);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.insight-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px var(--shadow);
+}
+
+.insight-card:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+}
+
+.insight-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+}
+
+.insight-content {
+    color: var(--text-dark);
+    font-style: italic;
+    margin-bottom: 1rem;
+}
+
+.insight-source {
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+.empty-insights {
+    width: 100%;
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-light);
+    background-color: #f8f9fa;
+    border-radius: var(--border-radius);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    main {
+        padding: 1rem;
+    }
+
+    #daily-boost-container {
+        padding: 1.5rem;
+    }
+
+    .daily-stats {
+        flex-direction: column;
+    }
+
+    .stat-item {
+        margin-bottom: 1.5rem;
+    }
+
+    .boost-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .insight-card {
+        flex: 0 0 85%;
+    }
+}
+
+/* Animation for new cards */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.boost-card {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.boost-card:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.boost-card:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.boost-card:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+.boost-card:nth-child(5) {
+    animation-delay: 0.4s;
+}
+
+/* Error and empty states */
+.error-message {
+    text-align: center;
+    padding: 2rem;
+    color: #e74c3c;
+    background-color: #fceaea;
+    border-radius: var(--border-radius);
+    margin: 1rem 0;
+    grid-column: 1 / -1;
+}
+
+.error-message i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-light);
+    background-color: #f8f9fa;
+    border-radius: var(--border-radius);
+    margin: 1rem 0;
+    grid-column: 1 / -1;
+}
+
+/* Toast notifications */
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.toast {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 4px;
+    margin-top: 10px;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}

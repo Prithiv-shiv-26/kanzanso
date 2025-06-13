@@ -1,0 +1,371 @@
+:root {
+    --primary-color: #5cb8d1;
+    --secondary-color: #7f47e6;
+    --accent-color: #f877f0;
+    --text-dark: #333333;
+    --text-light: #f0f0f0;
+    --background-dark: #0a1028;
+    --background-darker: #050a18;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --border-radius: 12px;
+    --transition: all 0.3s ease;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--background-dark) url('assets/stars.jpg') no-repeat center center/cover;
+    color: var(--text-light);
+    font-family: 'Montserrat', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+/* Navigation */
+.nav-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    background-color: rgba(92, 184, 209, 0.2);
+    color: var(--text-light);
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: var(--transition);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.back-button:hover {
+    background-color: rgba(92, 184, 209, 0.4);
+    transform: translateY(-2px);
+}
+
+.back-button i {
+    margin-right: 5px;
+}
+
+/* Meditation Header */
+.meditation-header {
+    text-align: center;
+    margin: 60px 0 30px;
+}
+
+.meditation-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 2px 10px rgba(127, 71, 230, 0.3);
+}
+
+.meditation-subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 2rem;
+}
+
+/* Breathing Circle Container */
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 40px;
+    height: 300px;
+    width: 300px;
+    position: relative;
+    transform: scale(1);
+}
+
+.circle {
+    background-color: var(--background-darker);
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    box-shadow: 0 0 30px rgba(127, 71, 230, 0.3);
+}
+
+.gradient-circle {
+    background: conic-gradient(
+        var(--secondary-color) 0%,
+        #4a2a9e 40%,
+        #fff 40%,
+        #fff 60%,
+        #6a3cbe 60%,
+        var(--secondary-color) 100%
+    );
+    height: 320px;
+    width: 320px;
+    z-index: -2;
+    border-radius: 50%;
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.pointer {
+    background-color: #fff;
+    border-radius: 50%;
+    height: 20px;
+    width: 20px;
+    display: block;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+.pointer-container {
+    position: absolute;
+    top: -40px;
+    left: 140px;
+    width: 20px;
+    height: 190px;
+    animation: rotate 7.5s linear forwards infinite;
+    transform-origin: bottom center;
+}
+
+#text {
+    font-size: 1.5rem;
+    font-weight: 500;
+    text-align: center;
+    color: white;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Controls Container */
+.controls-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Audio Player */
+.audio-player {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.audio-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.control-button {
+    background: linear-gradient(45deg, var(--secondary-color), var(--accent-color));
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.control-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.control-button:active {
+    transform: translateY(1px);
+}
+
+.volume-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.volume-container i {
+    color: white;
+    font-size: 1.2rem;
+}
+
+#volume-slider {
+    -webkit-appearance: none;
+    width: 100px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+    outline: none;
+}
+
+#volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+}
+
+/* Meditation Controls */
+.meditation-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.speed-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.speed-control label {
+    font-size: 0.9rem;
+}
+
+#speed-selector {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    outline: none;
+    cursor: pointer;
+}
+
+#speed-selector option {
+    background-color: var(--background-dark);
+}
+
+/* Meditation Tips */
+.meditation-tips {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    margin-bottom: 30px;
+    max-width: 600px;
+    width: 100%;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.meditation-tips h3 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.meditation-tips ul {
+    padding-left: 20px;
+}
+
+.meditation-tips li {
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+/* Animations */
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.container.grow {
+    animation: grow 3s linear forwards;
+}
+
+@keyframes grow {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.2);
+    }
+}
+
+.container.shrink {
+    animation: shrink 3s linear forwards;
+}
+
+@keyframes shrink {
+    from {
+        transform: scale(1.2);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .meditation-header h1 {
+        font-size: 2rem;
+    }
+
+    .container {
+        height: 250px;
+        width: 250px;
+    }
+
+    .gradient-circle {
+        height: 270px;
+        width: 270px;
+    }
+
+    .pointer-container {
+        top: -40px;
+        left: 115px;
+        height: 165px;
+    }
+
+    .audio-controls, .meditation-controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .volume-container {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .speed-control {
+        width: 100%;
+        justify-content: center;
+    }
+}

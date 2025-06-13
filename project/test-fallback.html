@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fallback Mode Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="services/api.js"></script>
+    <script src="services/userService.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .status {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .status.enabled {
+            color: #4CAF50;
+        }
+        .status.disabled {
+            color: #f44336;
+        }
+        .result {
+            margin-top: 10px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fallback Mode Test</h1>
+    
+    <div class="card">
+        <h2>Fallback Mode Status</h2>
+        <div id="fallback-status" class="status">Checking...</div>
+        <button id="toggle-fallback">Toggle Fallback Mode</button>
+        <button id="clear-storage">Clear Local Storage</button>
+    </div>
+    
+    <div class="card">
+        <h2>Test Login</h2>
+        <button id="test-login">Test Login</button>
+        <div id="login-result" class="result"></div>
+    </div>
+    
+    <div class="card">
+        <h2>Test Signup</h2>
+        <button id="test-signup">Test Signup</button>
+        <div id="signup-result" class="result"></div>
+    </div>
+    
+    <div class="card">
+        <h2>Test GET Request</h2>
+        <button id="test-get">Test GET</button>
+        <div id="get-result" class="result"></div>
+    </div>
+    
+    <div class="card">
+        <h2>Test POST Request</h2>
+        <button id="test-post">Test POST</button>
+        <div id="post-result" class="result"></div>
+    </div>
+    
+    <div class="card">
+        <h2>Local Storage</h2>
+        <pre id="local-storage"></pre>
+    </div>
+    
+    <script>
+        // Update fallback status display
+        function updateFallbackStatus() {
+            const statusEl = document.getElementById('fallback-status');
+            if (api.fallbackMode) {
+                statusEl.textContent = 'ENABLED';
+                statusEl.className = 'status enabled';
+            } else {
+                statusEl.textContent = 'DISABLED';
+                statusEl.className = 'status disabled';
+            }
+        }
+        
+        // Update local storage display
+        function updateLocalStorage() {
+            const storageEl = document.getElementById('local-storage');
+            const items = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                let value = localStorage.getItem(key);
+                
+                // Truncate token for display
+                if (key === 'token' && value.length > 20) {
+                    value = value.substring(0, 10) + '...' + value.substring(value.length - 5);
+                }
+                
+                items[key] = value;
+            }
+            storageEl.textContent = JSON.stringify(items, null, 2);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateFallbackStatus();
+            updateLocalStorage();
+            
+            // Toggle fallback mode
+            document.getElementById('toggle-fallback').addEventListener('click', () => {
+                api.fallbackMode = !api.fallbackMode;
+                updateFallbackStatus();
+                updateLocalStorage();
+            });
+            
+            // Clear local storage
+            document.getElementById('clear-storage').addEventListener('click', () => {
+                localStorage.clear();
+                updateLocalStorage();
+                alert('Local storage cleared');
+            });
+            
+            // Test login
+            document.getElementById('test-login').addEventListener('click', async () => {
+                const resultEl = document.getElementById('login-result');
+                resultEl.innerHTML = '<p>Testing login...</p>';
+                
+                try {
+                    const result = await userService.login('test@example.com', 'Password123!');
+                    resultEl.innerHTML = `
+                        <p>Login successful!</p>
+                        <pre>${JSON.stringify(result, null, 2)}</pre>
+                    `;
+                    updateLocalStorage();
+                } catch (error) {
+                    resultEl.innerHTML = `
+                        <p>Login failed:</p>
+                        <pre>${JSON.stringify(error, null, 2)}</pre>
+                    `;
+                }
+            });
+            
+            // Test signup
+            document.getElementById('test-signup').addEventListener('click', async () => {
+                const resultEl = document.getElementById('signup-result');
+                resultEl.innerHTML = '<p>Testing signup...</p>';
+                
+                try {
+                    const userData = {
+                        name: 'Test User',
+                        email: 'test' + Date.now() + '@example.com',
+                        password: 'Password123!'
+                    };
+                    
+                    const result = await userService.createUser(userData);
+                    resultEl.innerHTML = `
+                        <p>Signup successful!</p>
+                        <pre>${JSON.stringify(result, null, 2)}</pre>
+                    `;
+                    updateLocalStorage();
+                } catch (error) {
+                    resultEl.innerHTML = `
+                        <p>Signup failed:</p>
+                        <pre>${JSON.stringify(error, null, 2)}</pre>
+                    `;
+                }
+            });
+            
+            // Test GET request
+            document.getElementById('test-get').addEventListener('click', async () => {
+                const resultEl = document.getElementById('get-result');
+                resultEl.innerHTML = '<p>Testing GET request...</p>';
+                
+                try {
+                    const result = await api.get('/test-endpoint');
+                    resultEl.innerHTML = `
+                        <p>GET request successful!</p>
+                        <pre>${JSON.stringify(result, null, 2)}</pre>
+                    `;
+                } catch (error) {
+                    resultEl.innerHTML = `
+                        <p>GET request failed:</p>
+                        <pre>${JSON.stringify(error, null, 2)}</pre>
+                    `;
+                }
+            });
+            
+            // Test POST request
+            document.getElementById('test-post').addEventListener('click', async () => {
+                const resultEl = document.getElementById('post-result');
+                resultEl.innerHTML = '<p>Testing POST request...</p>';
+                
+                try {
+                    const result = await api.post('/test-endpoint', { test: 'data' });
+                    resultEl.innerHTML = `
+                        <p>POST request successful!</p>
+                        <pre>${JSON.stringify(result, null, 2)}</pre>
+                    `;
+                } catch (error) {
+                    resultEl.innerHTML = `
+                        <p>POST request failed:</p>
+                        <pre>${JSON.stringify(error, null, 2)}</pre>
+                    `;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

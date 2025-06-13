@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Assessment</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Kaushan+Script&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div class="page-container">
+        <header class="main-header">
+            <div class="header-content">
+                <h1 class="site-title">Mental Health Quiz</h1>
+                <p class="tagline">Understand yourself better, one question at a time</p>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Quiz Type Selection -->
+            <div id="quiz-type-selection" class="quiz-section">
+                <div class="section-container">
+                    <h2 class="section-title">
+                        Choose Your Assessment
+                        <span class="title-underline"></span>
+                    </h2>
+
+                    <div class="quiz-types-grid">
+                        <div class="quiz-type" data-type="initial_assessment">
+                            <div class="quiz-type-content">
+                                <h3>Initial Assessment</h3>
+                                <p>Comprehensive evaluation of your mental health (10 questions)</p>
+                            </div>
+                        </div>
+
+                        <div class="quiz-type" data-type="weekly_checkin">
+                            <div class="quiz-type-content">
+                                <h3>Weekly Check-in</h3>
+                                <p>Quick check on how you're doing this week (5 questions)</p>
+                            </div>
+                        </div>
+
+                        <div class="quiz-type" data-type="anxiety_focused">
+                            <div class="quiz-type-content">
+                                <h3>Anxiety Assessment</h3>
+                                <p>Focused on anxiety symptoms and management</p>
+                            </div>
+                        </div>
+
+                        <div class="quiz-type" data-type="depression_focused">
+                            <div class="quiz-type-content">
+                                <h3>Depression Assessment</h3>
+                                <p>Focused on mood and depression indicators</p>
+                            </div>
+                        </div>
+
+                        <div class="quiz-type" data-type="daily_mood">
+                            <div class="quiz-type-content">
+                                <h3>Daily Mood Check</h3>
+                                <p>Quick mood tracker (2-3 questions)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="view-history-container">
+                        <button id="view-history-main-btn" class="btn btn-primary">
+                            View Your Quiz History
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Questions Section -->
+            <section id="quiz-questions" class="quiz-section" style="display: none;">
+                <div class="section-container">
+                    <div class="quiz-card">
+                        <div id="quiz-progress">
+                            <div id="progress-bar">
+                                <div id="progress-fill"></div>
+                            </div>
+                            <div id="progress-text">Question 1 of 10</div>
+                        </div>
+
+                        <h2 id="quesBox" class="question-text">1. demo ques</h2>
+
+                        <div class="options-container">
+                            <div class="option-row">
+                                <input class="option-input" type="radio" name="option" id="opt1" value="A">
+                                <label class="option-label" for="opt1">option a</label>
+                            </div>
+                            <div class="option-row">
+                                <input class="option-input" type="radio" name="option" id="opt2" value="B">
+                                <label class="option-label" for="opt2">option b</label>
+                            </div>
+                            <div class="option-row">
+                                <input class="option-input" type="radio" name="option" id="opt3" value="C">
+                                <label class="option-label" for="opt3">option c</label>
+                            </div>
+                            <div class="option-row">
+                                <input class="option-input" type="radio" name="option" id="opt4" value="D">
+                                <label class="option-label" for="opt4">option d</label>
+                            </div>
+                        </div>
+
+                        <div class="button-container">
+                            <button class="btn" id="submit-btn">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section id="results-section" class="quiz-section" style="display: none;">
+                <div class="section-container">
+                    <div class="results-card">
+                        <h2 class="section-title">Your Assessment Results</h2>
+                        <div id="result-summary" class="result-block"></div>
+                        <div id="result-details" class="result-block"></div>
+                        <div id="recommendations" class="result-block"></div>
+                        <div class="result-actions">
+                            <button id="view-history-btn" class="btn">View History</button>
+                            <button id="take-another-btn" class="btn">Take Another Quiz</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- History Section -->
+            <section id="history-section" class="quiz-section" style="display: none;">
+                <div class="section-container">
+                    <div class="history-card">
+                        <h2 class="section-title">Your Assessment History</h2>
+
+                        <div class="history-filters">
+                            <select id="history-type-filter" class="filter-select">
+                                <option value="all">All Assessments</option>
+                                <option value="initial_assessment">Initial Assessment</option>
+                                <option value="weekly_checkin">Weekly Check-in</option>
+                                <option value="anxiety_focused">Anxiety Assessment</option>
+                                <option value="depression_focused">Depression Assessment</option>
+                                <option value="daily_mood">Daily Mood Check</option>
+                            </select>
+                            <select id="history-time-filter" class="filter-select">
+                                <option value="all">All Time</option>
+                                <option value="week">Past Week</option>
+                                <option value="month">Past Month</option>
+                                <option value="year">Past Year</option>
+                            </select>
+                        </div>
+
+                        <div id="history-chart" class="history-chart">
+                            <!-- Chart will be rendered here -->
+                        </div>
+
+                        <div id="history-list" class="history-list">
+                            <!-- History items will be rendered here -->
+                        </div>
+
+                        <div class="history-actions">
+                            <button id="back-to-results-btn" class="btn" style="display: none;">Back to Results</button>
+                            <button id="back-to-quiz-btn" class="btn">Back to Quiz Selection</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p class="footer-logo">Kanzanso</p>
+            <p class="footer-tagline">the greatest treasure is you</p>
+        </div>
+    </footer>
+
+    <!-- Include API services -->
+    <script src="../services/api.js"></script>
+    <script src="../services/quizService.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

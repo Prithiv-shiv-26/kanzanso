@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Boost - Kanzanso</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Kaushan+Script&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div class="page-container">
+        <header class="main-header">
+            <div class="header-content">
+                <div class="header-nav">
+                    <a href="../features.html" class="back-link">
+                        <i class="fas fa-arrow-left"></i> Back to Features
+                    </a>
+                </div>
+                <h1 class="site-title">Daily Boost</h1>
+                <p class="tagline">Personalized challenges to boost your wellbeing</p>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="stats-section">
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-circle">
+                            <svg viewBox="0 0 36 36" class="circular-chart">
+                                <path class="circle-bg" d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path id="daily-progress" class="circle" stroke-dasharray="0, 100" d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <text x="18" y="20.35" class="percentage">0%</text>
+                            </svg>
+                        </div>
+                        <h3 class="stat-title">Today's Progress</h3>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-number" id="streak-count">0</div>
+                        <h3 class="stat-title">Day Streak</h3>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-number" id="challenges-count">0</div>
+                        <h3 class="stat-title">Challenges Completed</h3>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-number" id="insights-count">0</div>
+                        <h3 class="stat-title">Insights Unlocked</h3>
+                    </div>
+                </div>
+            </section>
+
+            <section class="challenges-section">
+                <div class="section-header">
+                    <h2 class="section-title">Today's Challenges</h2>
+                    <p class="section-description">Complete these personalized challenges to boost your wellbeing</p>
+                </div>
+
+                <div class="filter-container">
+                    <div class="filter-group">
+                        <label for="status-filter">Status:</label>
+                        <select id="status-filter" class="filter-select">
+                            <option value="all">All</option>
+                            <option value="active">Active</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="category-filter">Category:</label>
+                        <select id="category-filter" class="filter-select">
+                            <option value="all">All Categories</option>
+                            <option value="journal">Journal</option>
+                            <option value="mood">Mood</option>
+                            <option value="todo">To-Do</option>
+                            <option value="assessment">Assessment</option>
+                            <option value="playlist">Playlist</option>
+                            <option value="mindfulness">Mindfulness</option>
+                            <option value="growth">Growth</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="difficulty-filter">Difficulty:</label>
+                        <select id="difficulty-filter" class="filter-select">
+                            <option value="all">All Difficulties</option>
+                            <option value="1">Easy (★)</option>
+                            <option value="2">Medium (★★)</option>
+                            <option value="3">Hard (★★★)</option>
+                        </select>
+                    </div>
+
+                    <button id="clear-filters" class="filter-button">
+                        <i class="fas fa-times"></i> Clear Filters
+                    </button>
+                </div>
+
+                <div class="challenges-container" id="challenges-container">
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading your personalized challenges...</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="insights-section">
+                <div class="section-header">
+                    <h2 class="section-title">Your Insights</h2>
+                    <p class="section-description">Personalized insights based on your activity patterns</p>
+                </div>
+
+                <div class="insights-carousel" id="insights-carousel">
+                    <div class="empty-insights">
+                        <i class="fas fa-lightbulb"></i>
+                        <p>Complete challenges to unlock personal insights!</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="main-footer">
+            <div class="footer-content">
+                <p class="footer-logo">Kanzanso</p>
+                <p class="footer-tagline">the greatest treasure is you</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Challenge Templates (Hidden) -->
+    <div class="templates" style="display: none;">
+        <!-- Journal Challenge Template -->
+        <div class="challenge-card journal-card" data-template="journal">
+            <div class="challenge-header">
+                <div class="challenge-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div class="challenge-category">Journal</div>
+                <div class="challenge-difficulty">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                </div>
+            </div>
+            <h3 class="challenge-title">Reconnect with Journaling</h3>
+            <p class="challenge-description">It's been a while! Write a journal entry about what's been on your mind lately.</p>
+            <div class="challenge-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+                <span class="progress-text">0%</span>
+            </div>
+            <div class="challenge-actions">
+                <button class="action-button add-todo-btn">
+                    <i class="fas fa-plus"></i> Add to Todo
+                </button>
+                <a href="#" class="action-button start-btn">
+                    <i class="fas fa-play"></i> Start Now
+                </a>
+                <button class="action-button complete-btn">
+                    <i class="fas fa-check"></i> Complete
+                </button>
+            </div>
+        </div>
+
+        <!-- Mood Challenge Template -->
+        <div class="challenge-card mood-card" data-template="mood">
+            <div class="challenge-header">
+                <div class="challenge-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="challenge-category">Mood</div>
+                <div class="challenge-difficulty">
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                    <i class="far fa-star"></i>
+                </div>
+            </div>
+            <h3 class="challenge-title">Track Your Mood</h3>
+            <p class="challenge-description">How are you feeling today? Record your mood to track patterns.</p>
+            <div class="challenge-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+                <span class="progress-text">0%</span>
+            </div>
+            <div class="challenge-actions">
+                <button class="action-button add-todo-btn">
+                    <i class="fas fa-plus"></i> Add to Todo
+                </button>
+                <a href="#" class="action-button start-btn">
+                    <i class="fas fa-play"></i> Start Now
+                </a>
+                <button class="action-button complete-btn">
+                    <i class="fas fa-check"></i> Complete
+                </button>
+            </div>
+        </div>
+
+        <!-- Todo Challenge Template -->
+        <div class="challenge-card todo-card" data-template="todo">
+            <div class="challenge-header">
+                <div class="challenge-icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <div class="challenge-category">To-Do</div>
+                <div class="challenge-difficulty">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                </div>
+            </div>
+            <h3 class="challenge-title">Complete a Key Task</h3>
+            <p class="challenge-description">Focus on completing one important task from your list today.</p>
+            <div class="challenge-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+                <span class="progress-text">0%</span>
+            </div>
+            <div class="challenge-actions">
+                <button class="action-button add-todo-btn">
+                    <i class="fas fa-plus"></i> Add to Todo
+                </button>
+                <a href="#" class="action-button start-btn">
+                    <i class="fas fa-play"></i> Start Now
+                </a>
+                <button class="action-button complete-btn">
+                    <i class="fas fa-check"></i> Complete
+                </button>
+            </div>
+        </div>
+
+        <!-- Quiz Challenge Template -->
+        <div class="challenge-card quiz-card" data-template="assessment">
+            <div class="challenge-header">
+                <div class="challenge-icon">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <div class="challenge-category">Assessment</div>
+                <div class="challenge-difficulty">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                </div>
+            </div>
+            <h3 class="challenge-title">Self-Check Quiz</h3>
+            <p class="challenge-description">Take a quick mental health assessment to check in with yourself.</p>
+            <div class="challenge-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+                <span class="progress-text">0%</span>
+            </div>
+            <div class="challenge-actions">
+                <button class="action-button add-todo-btn">
+                    <i class="fas fa-plus"></i> Add to Todo
+                </button>
+                <a href="#" class="action-button start-btn">
+                    <i class="fas fa-play"></i> Start Now
+                </a>
+                <button class="action-button complete-btn">
+                    <i class="fas fa-check"></i> Complete
+                </button>
+            </div>
+        </div>
+
+        <!-- Playlist Challenge Template -->
+        <div class="challenge-card playlist-card" data-template="playlist">
+            <div class="challenge-header">
+                <div class="challenge-icon">
+                    <i class="fas fa-music"></i>
+                </div>
+                <div class="challenge-category">Playlist</div>
+                <div class="challenge-difficulty">
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                    <i class="far fa-star"></i>
+                </div>
+            </div>
+            <h3 class="challenge-title">Mood Music</h3>
+            <p class="challenge-description">Refresh your mood with a personalized playlist.</p>
+            <div class="challenge-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+                <span class="progress-text">0%</span>
+            </div>
+            <div class="challenge-actions">
+                <button class="action-button add-todo-btn">
+                    <i class="fas fa-plus"></i> Add to Todo
+                </button>
+                <a href="#" class="action-button start-btn">
+                    <i class="fas fa-play"></i> Start Now
+                </a>
+                <button class="action-button complete-btn">
+                    <i class="fas fa-check"></i> Complete
+                </button>
+            </div>
+        </div>
+
+        <!-- Meditation Challenge Template -->
+        <div class="challenge-card meditation-card" data-template="mindfulness">
+            <div class="challenge-header">
+                <div class="challenge-icon">
+                    <i class="fas fa-spa"></i>
+                </div>
+                <div class="challenge-category">Mindfulness</div>
+                <div class="challenge-difficulty">
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                    <i class="far fa-star"></i>
+                </div>
+            </div>
+            <h3 class="challenge-title">Mindful Moment</h3>
+            <p class="challenge-description">Take a few minutes for a guided meditation session.</p>
+            <div class="challenge-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+                <span class="progress-text">0%</span>
+            </div>
+            <div class="challenge-actions">
+                <button class="action-button add-todo-btn">
+                    <i class="fas fa-plus"></i> Add to Todo
+                </button>
+                <a href="#" class="action-button start-btn">
+                    <i class="fas fa-play"></i> Start Now
+                </a>
+                <button class="action-button complete-btn">
+                    <i class="fas fa-check"></i> Complete
+                </button>
+            </div>
+        </div>
+
+        <!-- Growth Challenge Template -->
+        <div class="challenge-card growth-card" data-template="growth">
+            <div class="challenge-header">
+                <div class="challenge-icon">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <div class="challenge-category">Growth</div>
+                <div class="challenge-difficulty">
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                    <i class="far fa-star"></i>
+                </div>
+            </div>
+            <h3 class="challenge-title">Inspirational Quote</h3>
+            <p class="challenge-description">Find a quote that resonates with you today and save it to your favorites.</p>
+            <div class="challenge-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+                <span class="progress-text">0%</span>
+            </div>
+            <div class="challenge-actions">
+                <button class="action-button add-todo-btn">
+                    <i class="fas fa-plus"></i> Add to Todo
+                </button>
+                <a href="#" class="action-button start-btn">
+                    <i class="fas fa-play"></i> Start Now
+                </a>
+                <button class="action-button complete-btn">
+                    <i class="fas fa-check"></i> Complete
+                </button>
+            </div>
+        </div>
+
+        <!-- Insight Template -->
+        <div class="insight-card" data-template="insight">
+            <div class="insight-header">
+                <h3 class="insight-title">Your Growth Journey</h3>
+                <div class="insight-source">Daily Boost</div>
+            </div>
+            <p class="insight-content">Consistent small steps lead to meaningful progress. Keep going!</p>
+            <div class="insight-date">May 15, 2023</div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="../services/api.js"></script>
+    <script src="../services/userService.js"></script>
+    <script src="dailyBoostService.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

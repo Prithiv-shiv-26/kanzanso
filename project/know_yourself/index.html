@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanzanso</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="../assets/kanzanso.png" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/kanzanso.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/kanzanso.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/kanzanso.png">
+  </head>
+  <body>
+    <div class="app-container">
+      <header>
+        <h1>
+          <span class="bright">Know </span>Yourself
+        </h1>
+        <p class="tagline">How are you feeling today?</p>
+      </header>
+      <nav>
+        <ul>
+          <li>
+            <a href="#motivation" class="active">
+              <i class="fas fa-sun"></i> Daily Motivation </a>
+          </li>
+          <li>
+            <a href="#weather">
+              <i class="fas fa-cloud-sun"></i> Weather Mood </a>
+          </li>
+          <li>
+            <a href="#mood-tracker">
+              <i class="fas fa-chart-line"></i> Mood Tracker </a>
+          </li>
+          <li>
+            <a href="#gratitude">
+              <i class="fas fa-heart"></i> Gratitude Journal </a>
+          </li>
+        </ul>
+      </nav>
+      <main>
+        <!-- Daily Motivation Section -->
+        <section id="motivation" class="section active">
+          <div class="section-header">
+            <h2>Daily Motivation</h2>
+          </div>
+          <div class="motivation-content">
+            <div class="motivation-tabs">
+              <button id="random-tab" class="motivation-tab active">Daily Quote</button>
+              <button id="favorites-tab" class="motivation-tab">My Favorites</button>
+            </div>
+            <!-- Random Quote Section -->
+            <div id="random-section" class="quote-section active">
+              <div class="quote-card">
+                <p id="daily-quote" class="quote-text"></p>
+                <p id="quote-author" class="quote-author"></p>
+                <span id="quote-category" class="quote-category"></span>
+              </div>
+              <div class="quote-actions">
+                <button id="favorite-quote-btn" class="circular-btn">
+                  <i class="far fa-heart"></i>
+                </button>
+                <button id="new-quote-btn" class="primary-btn">New Quote</button>
+                <button id="share-quote-btn" class="circular-btn">
+                  <i class="fas fa-share-alt"></i>
+                </button>
+              </div>
+            </div>
+            <!-- Favorites Section -->
+            <div id="favorites-section" class="quote-section">
+              <div id="favorite-quotes-container" class="favorites-container">
+                <!-- Favorite quotes will be rendered here -->
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- Weather Mood Section -->
+        <section id="weather" class="section">
+          <div class="section-header">
+            <h2>Weather Mood</h2>
+          </div>
+          <div class="weather-content">
+            <div class="weather-card">
+              <div class="weather-info">
+                <div id="weather-icon"></div>
+                <div id="weather-details">
+                  <p id="current-location">Loading location...</p>
+                  <p id="current-weather">Loading weather...</p>
+                  <p id="current-temp">--°C</p>
+                </div>
+              </div>
+              <!-- Added Weather Details Grid -->
+              <div class="weather-details-grid">
+                <div class="weather-detail-item">
+                  <i class="fas fa-wind"></i>
+                  <span>Wind</span>
+                  <p id="wind-speed">-- m/s</p>
+                </div>
+                <div class="weather-detail-item">
+                  <i class="fas fa-tint"></i>
+                  <span>Humidity</span>
+                  <p id="humidity">--%</p>
+                </div>
+                <div class="weather-detail-item">
+                  <i class="fas fa-compress-alt"></i>
+                  <span>Pressure</span>
+                  <p id="pressure">-- hPa</p>
+                </div>
+                <div class="weather-detail-item">
+                  <i class="fas fa-cloud"></i>
+                  <span>Cloud Cover</span>
+                  <p id="cloud-cover">--%</p>
+                </div>
+              </div>
+              <!-- Weather Forecast -->
+              <div class="weather-forecast">
+                <h3>Forecast</h3>
+                <div id="forecast-container" class="forecast-items"></div>
+              </div>
+              <div class="weather-mood">
+                <h3>Today's Mood Suggestion</h3>
+                <p id="mood-suggestion">Please allow location access for personalized suggestions.</p>
+              </div>
+              <div class="weather-activities">
+                <h3>Suggested Activities</h3>
+                <ul id="activities-list">
+                  <li>Loading activities...</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- Mood Tracker Section -->
+        <section id="mood-tracker" class="section">
+          <div class="section-header">
+            <h2>Mood Tracker</h2>
+          </div>
+          <div class="mood-content">
+            <div class="mood-input">
+              <h3>How are you feeling today?</h3>
+              <div class="mood-selector">
+                <div class="mood-option" data-mood="great">
+                  <div class="mood-emoji">😀</div>
+                  <span>Great</span>
+                </div>
+                <div class="mood-option" data-mood="good">
+                  <div class="mood-emoji">🙂</div>
+                  <span>Good</span>
+                </div>
+                <div class="mood-option" data-mood="okay">
+                  <div class="mood-emoji">😐</div>
+                  <span>Okay</span>
+                </div>
+                <div class="mood-option" data-mood="down">
+                  <div class="mood-emoji">😔</div>
+                  <span>Down</span>
+                </div>
+                <div class="mood-option" data-mood="awful">
+                  <div class="mood-emoji">😞</div>
+                  <span>Awful</span>
+                </div>
+              </div>
+              <div class="mood-note-container">
+                <textarea id="mood-note" placeholder="Add a note about how you feel today (optional)"></textarea>
+                <button id="save-mood" class="primary-btn">Save Today's Mood</button>
+              </div>
+            </div>
+            <div class="mood-visualization">
+              <h3>Your Mood History</h3>
+              <div class="mood-heatmap-container">
+                <div id="mood-heatmap" class="mood-heatmap"></div>
+              </div>
+              <div class="mood-legend">
+                <span class="legend-item">
+                  <span class="legend-color" style="background-color: #4CAF50;"></span>Great </span>
+                <span class="legend-item">
+                  <span class="legend-color" style="background-color: #8BC34A;"></span>Good </span>
+                <span class="legend-item">
+                  <span class="legend-color" style="background-color: #FFC107;"></span>Okay </span>
+                <span class="legend-item">
+                  <span class="legend-color" style="background-color: #FF9800;"></span>Down </span>
+                <span class="legend-item">
+                  <span class="legend-color" style="background-color: #F44336;"></span>Awful </span>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- Gratitude Journal Section -->
+        <section id="gratitude" class="section">
+          <div class="section-header">
+            <h2>Gratitude Journal</h2>
+          </div>
+          <div class="gratitude-content">
+            <div class="gratitude-input">
+              <h3>What are you grateful for today?</h3>
+              <div class="gratitude-prompt">
+                <p id="gratitude-prompt-text">Taking a moment to reflect on the good things in life can boost your mood and overall wellbeing.</p>
+                <button id="new-prompt" class="secondary-btn">
+                  <i class="fas fa-sync-alt"></i> New Prompt </button>
+              </div>
+              <textarea id="gratitude-entry" placeholder="I am grateful for..."></textarea>
+              <div class="gratitude-actions">
+                <div class="gratitude-tags">
+                  <span class="tag-label">Tags:</span>
+                  <div class="tag-options">
+                    <span class="gratitude-tag" data-tag="people">People</span>
+                    <span class="gratitude-tag" data-tag="experiences">Experiences</span>
+                    <span class="gratitude-tag" data-tag="things">Things</span>
+                    <span class="gratitude-tag" data-tag="personal">Personal</span>
+                    <span class="gratitude-tag" data-tag="work">Work</span>
+                  </div>
+                </div>
+                <div class="gratitude-buttons">
+                  <button id="save-gratitude" class="primary-btn">Save Entry</button>
+                </div>
+              </div>
+            </div>
+            <div class="gratitude-history">
+              <div class="gratitude-history-header">
+                <h3>Your Gratitude Journey</h3>
+                <div class="gratitude-filter">
+                  <select id="gratitude-filter">
+                    <option value="all">All Entries</option>
+                    <option value="today">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                    <option value="people">People</option>
+                    <option value="experiences">Experiences</option>
+                    <option value="things">Things</option>
+                    <option value="personal">Personal</option>
+                    <option value="work">Work</option>
+                  </select>
+                </div>
+              </div>
+              <div class="gratitude-stats">
+                <div class="stat-item">
+                  <span class="stat-number" id="total-entries">0</span>
+                  <span class="stat-label">Total Entries</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number" id="current-streak">0</span>
+                  <span class="stat-label">Day Streak</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number" id="monthly-entries">0</span>
+                  <span class="stat-label">This Month</span>
+                </div>
+              </div>
+              <div id="gratitude-entries" class="entries-container">
+                <!-- Entries will be rendered here -->
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer>
+        <p style="font-size: 3em; font-family: 'Kaushan Script', cursive; text-align: center;">Kanzanso</p>
+        <p style="text-align: center;">the greatest treasure is you</p>
+      </footer>
+    </div>
+    <script src="script.js" type="module"></script>
+  </body>
+</html>

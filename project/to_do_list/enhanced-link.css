@@ -1,0 +1,23 @@
+/* Enhanced link styling for todo items */
+.todo-item a {
+    color: inherit;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.todo-item a:hover {
+    opacity: 0.8;
+}
+
+/* Theme-specific link colors */
+.standard-todo .todo-item a {
+    color: #5cb8d1;
+}
+
+.light-todo .todo-item a {
+    color: #1a6985;
+}
+
+.darker-todo .todo-item a {
+    color: #5cb8d1;
+}

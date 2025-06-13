@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <title>Kanzanso Features</title>
+    <link rel="stylesheet" href="css/features.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap" rel="stylesheet">
+    <style>
+        .login-required {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+        .login-required h1 {
+            color: #5cb8d1;
+            margin-bottom: 20px;
+        }
+        .login-required p {
+            margin-bottom: 30px;
+            font-size: 18px;
+            max-width: 600px;
+        }
+        .login-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #5cb8d1;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .login-button:hover {
+            background-color: #4a9cb3;
+        }
+        .features-content {
+            display: none;
+        }
+    </style>
+</head>
+
+<body style="background-color:rgb(255, 255, 255);"></body>
+
+<body id="page-top">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+        <div class="container px-5">
+            <a class="navbar-brand" href="#page-top">Kanzanso</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span
+                    class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="home.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="features.html">Features</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login/login.html">Sign In/ Sign Up</a></li>
+                    <div id="google_translate_element"></div>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login required message -->
+    <div id="login-required" class="login-required">
+        <h1>Login Required</h1>
+        <p>You need to be logged in to access the features of Kanzanso. Please sign in or create an account to continue.</p>
+        <a href="login/login.html" class="login-button">Sign In / Sign Up</a>
+    </div>
+
+    <!-- Features content (will be shown only if logged in) -->
+    <div id="features-content" class="features-content">
+        <div class="alan-btn"></div>
+    
+        <section>
+            <div class="container px-5">
+                <div class="row gx-5 align-items-center">
+                    <div class="col-lg-6">
+                        <div class="p-5"><img class="img-fluid rounded-circle" src="assets/img/5.png" alt="..." /></div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="p-5">
+                            <h2 class="display-4">To do List</h2>
+
+                            <p>A simple todo list where you can add, check or delete!</p>
+                            <a class="btn btn-primary btn-xl rounded-pill mt-5" href="to_do_list/index.html">Click Here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Content section 1-->
+    <section id="scroll">
+        <div class="container px-5">
+            <div class="row gx-5 align-items-center">
+                <div class="col-lg-6 order-lg-2">
+                    <div class="p-5"><img class="img-fluid rounded-circle" src="assets/img/w.png" alt="..." /></div>
+                </div>
+                <div class="col-lg-6 order-lg-1">
+                    <div class="p-5">
+                        <h2 class="display-4">Know Yourself</h2>
+                        <p>Get to know yourself! How is weather affecting you? Do you want to track your mood? What are you grateful for today? How motivated are you?</p>
+                        <a class="btn btn-primary btn-xl rounded-pill mt-5" href="know_yourself/index.html">how are you today?
+                            </a>
+                        
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Content section 2-->
+    <section>
+        <div class="container px-5">
+            <div class="row gx-5 align-items-center">
+                <div class="col-lg-6">
+                    <div class="p-5"><img class="img-fluid rounded-circle"
+                            src="assets/img/m.png" alt="..." /></div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="p-5">
+                        <h2 class="display-4">Short Mental Health Quiz</h2>
+                        <p>Spare 5 min to know about your mental heath!</p>
+                        <a class="btn btn-primary btn-xl rounded-pill mt-5" href="mental_health_quiz">Know your mental health here!</a>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Content section 3-->
+    <section>
+        <div class="container px-5">
+            <div class="row gx-5 align-items-center">
+                <div class="col-lg-6 order-lg-2">
+                    <div class="p-5"><img class="img-fluid rounded-circle" src="assets/img/db.png" alt="..." /></div>
+                </div>
+                <div class="col-lg-6 order-lg-1">
+                    <div class="p-5">
+                        <h2 class="display-4">Daily Boost</h2>
+                        <p>Personalized micro-challenges to boost your wellbeing! Complete daily tasks tailored to your needs and unlock personal insights.</p>
+                        <a class="btn btn-primary btn-xl rounded-pill mt-5"
+                            href="daily_boost/index.html">Daily Boost</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section>
+        <div class="container px-5">
+            <div class="row gx-5 align-items-center">
+                <div class="col-lg-6">
+                    <div class="p-5"><img class="img-fluid rounded-circle" src="assets/img/6.png" alt="..." /></div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="p-5">
+                        <h2 class="display-4">Mini games and self-care challenges/streaks</h2>
+                        <p>How long can you maintain a habit? Check our streak family to develop a habit!<br> Also check out our mini games to reduce your stress!</p>
+                        <a class="btn btn-primary btn-xl rounded-pill mt-5"
+                            href="mini_games/streaks/index.html">Mini Games & Streaks</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+        <!-- Content section 5-->
+        <section>
+            <div class="container px-5">
+                <div class="row gx-5 align-items-center">
+                    <div class="col-lg-6 order-lg-2">
+                        <div class="p-5"><img class="img-fluid rounded-circle" src="assets/img/4.png" alt="..." /></div>
+                    </div>
+                    <div class="col-lg-6 order-lg-1">
+                        <div class="p-5">
+                            <h2 class="display-4">Let there be rock!</h2>
+                            <p>Tune in with our mood based spotify player</p>
+                            <a class="btn btn-primary btn-xl rounded-pill mt-5" href="playlist/index.html">SPOTIFY
+                                PLAYLIST</a>
+                        </div>
+                    </div>
+                </div>
+        </section>
+    
+    <!-- Content section 4-->
+    <section>
+        <div class="container px-5">
+            <div class="row gx-5 align-items-center">
+                <div class="col-lg-6">
+                    <div class="p-5"><img class="img-fluid rounded-circle" src="assets/img/2.jpg" alt="..." /></div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="p-5">
+                        <h2 class="display-4">Relax and meditate</h2>
+                        <p>-meditation platfom</p>
+                        <p>Relax and breathe out with our meditation corner</p>
+                        <a class="btn btn-primary btn-xl rounded-pill mt-5" href="meditation/index.html">MEDITATION</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+
+    <script>
+        var alanBtnInstance = alanBtn({
+            key: "b0ca2efcc6668f9c048678373503c6542e956eca572e1d8b807a3e2338fdd0dc/stage",
+
+            onCommand: function (commandData) {
+                if (commandData.command === "features") {
+                    //call client code that will react on the received command
+                    console.log('Navigating to features page')
+                    window.location = ('features.html')
+                }
+
+                if (commandData.command === "pergnancy") {
+                    window.location = ('pregnancy_tracker/main.html')
+                }
+
+                if (commandData.command === "meditate") {
+                    window.location = ('meditation/index.html')
+                }
+            },
+
+            rootEl: document.getElementById("alan-btn"),
+        });
+    </script>
+
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({ pageLanguage: 'en' }, 'google_translate_element');
+        }
+    </script>
+
+    <script type="text/javascript"
+        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    
+    <!-- Authentication script -->
+    <script src="js/auth.js"></script>
+    
+    <!-- Script to check if user is logged in -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const token = localStorage.getItem('token');
+            const userName = localStorage.getItem('userName');
+            
+            const loginRequiredDiv = document.getElementById('login-required');
+            const featuresContentDiv = document.getElementById('features-content');
+            
+            if (token && userName) {
+                // User is logged in, show features
+                loginRequiredDiv.style.display = 'none';
+                featuresContentDiv.style.display = 'block';
+            } else {
+                // User is not logged in, show login required message
+                loginRequiredDiv.style.display = 'flex';
+                featuresContentDiv.style.display = 'none';
+            }
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,107 @@
+/* style.css (Revised for equal size divisions) */
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 2px;
+    background-color: #cee8f3;
+    color: #333;
+    line-height: 1.6;
+}
+
+.mindful-header {
+    background-color: #0a1645;
+    padding: 30px 20px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    text-align: center;
+}
+
+.intro-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.main-title {
+    color: #ffffff;
+    font-family: 'Concert One', cursive;
+    font-size: 2.8em;
+    margin-bottom: 15px;
+}
+
+.intro-text {
+    color: #f8f3f3;
+    font-size: 1.1em;
+    margin-bottom: 30px;
+}
+
+.main-content {
+    display: flex; /* Enable Flexbox for horizontal layout */
+    flex-direction: row; /* Arrange items in a row */
+    justify-content: space-around; /* Distribute space evenly around items */
+    align-items: stretch; /* Make items the same height by default */
+    max-width: 1200px; /* Adjust max width as needed */
+    margin: 0 auto;
+    padding: 20px; /* Add some padding around the main content */
+    gap: 20px; /* Space between the categories */
+    flex-wrap: wrap; /* Allow categories to wrap to the next line on smaller screens */
+}
+
+.mindfulness-category {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eee;
+    /* Remove explicit width to allow flex to control size */
+    flex-basis: calc(25% - 20px); /* Initial width for equal distribution */
+    box-sizing: border-box; /* Include padding and border in the width */
+}
+
+.category-title {
+    color: #050a2d;
+    font-size: 2em;
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 8px;
+    text-align: center;
+}
+
+.video-item {
+    margin-bottom: 15px;
+}
+
+.video-title {
+    color: #444;
+    font-size: 1.1em;
+    margin-top: 0;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.video-wrapper {
+    display: flex;
+    justify-content: center;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.video-wrapper iframe {
+    max-width: 100%;
+    height: auto;
+    border: none;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 960px) {
+    .main-content {
+        flex-direction: column; /* Stack categories vertically on smaller screens */
+        align-items: stretch; /* Ensure full width when stacked */
+    }
+    .mindfulness-category {
+        flex-basis: auto; /* Reset flex-basis when stacked */
+        width: 100%; /* Take full width on smaller screens */
+    }
+}

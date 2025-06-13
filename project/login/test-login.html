@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login Redirect</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../services/api.js"></script>
+    <script src="../services/userService.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .result {
+            margin-top: 10px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Login Redirect</h1>
+    
+    <div class="card">
+        <h2>Test Login</h2>
+        <p>Click the button below to test login and redirect:</p>
+        <button id="test-login">Test Login</button>
+        <div id="login-result" class="result"></div>
+    </div>
+    
+    <div class="card">
+        <h2>Test Manual Redirect</h2>
+        <p>Click the buttons below to test different redirect methods:</p>
+        <button id="redirect-relative">Relative Path</button>
+        <button id="redirect-absolute">Absolute Path</button>
+        <button id="redirect-replace">Location Replace</button>
+        <button id="redirect-assign">Location Assign</button>
+        <div id="redirect-result" class="result"></div>
+    </div>
+    
+    <div class="card">
+        <h2>Local Storage</h2>
+        <pre id="local-storage"></pre>
+    </div>
+    
+    <script>
+        // Update local storage display
+        function updateLocalStorage() {
+            const storageEl = document.getElementById('local-storage');
+            const items = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                let value = localStorage.getItem(key);
+                
+                // Truncate token for display
+                if (key === 'token' && value.length > 20) {
+                    value = value.substring(0, 10) + '...' + value.substring(value.length - 5);
+                }
+                
+                items[key] = value;
+            }
+            storageEl.textContent = JSON.stringify(items, null, 2);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateLocalStorage();
+            
+            // Test login
+            document.getElementById('test-login').addEventListener('click', async () => {
+                const resultEl = document.getElementById('login-result');
+                resultEl.innerHTML = '<p>Testing login...</p>';
+                
+                try {
+                    // Force fallback mode
+                    api.fallbackMode = true;
+                    
+                    const result = await userService.login('test@example.com', 'Password123!');
+                    resultEl.innerHTML = `
+                        <p>Login successful!</p>
+                        <pre>${JSON.stringify(result, null, 2)}</pre>
+                        <p>Redirecting in 3 seconds...</p>
+                    `;
+                    updateLocalStorage();
+                    
+                    // Redirect after a delay
+                    setTimeout(() => {
+                        // Use a more reliable redirect method
+                        const baseUrl = window.location.href.split('/login/')[0];
+                        const homePage = baseUrl + '/home.html';
+                        console.log('Redirecting to:', homePage);
+                        
+                        // Use location.replace for a clean redirect without history
+                        window.location.replace(homePage);
+                    }, 3000);
+                } catch (error) {
+                    resultEl.innerHTML = `
+                        <p>Login failed:</p>
+                        <pre>${JSON.stringify(error, null, 2)}</pre>
+                    `;
+                }
+            });
+            
+            // Test redirect methods
+            // Get base URL for reliable redirects
+            function getHomePageUrl() {
+                const baseUrl = window.location.href.split('/login/')[0];
+                return baseUrl + '/home.html';
+            }
+            
+            document.getElementById('redirect-relative').addEventListener('click', () => {
+                const resultEl = document.getElementById('redirect-result');
+                resultEl.innerHTML = '<p>Redirecting using relative path (window.location.href)...</p>';
+                setTimeout(() => {
+                    window.location.href = '../home.html';
+                }, 1000);
+            });
+            
+            document.getElementById('redirect-absolute').addEventListener('click', () => {
+                const resultEl = document.getElementById('redirect-result');
+                resultEl.innerHTML = '<p>Redirecting using absolute path (window.location.href)...</p>';
+                setTimeout(() => {
+                    const homePage = getHomePageUrl();
+                    console.log('Redirecting to:', homePage);
+                    window.location.href = homePage;
+                }, 1000);
+            });
+            
+            document.getElementById('redirect-replace').addEventListener('click', () => {
+                const resultEl = document.getElementById('redirect-result');
+                resultEl.innerHTML = '<p>Redirecting using location.replace()...</p>';
+                setTimeout(() => {
+                    const homePage = getHomePageUrl();
+                    console.log('Redirecting to:', homePage);
+                    window.location.replace(homePage);
+                }, 1000);
+            });
+            
+            document.getElementById('redirect-assign').addEventListener('click', () => {
+                const resultEl = document.getElementById('redirect-result');
+                resultEl.innerHTML = '<p>Redirecting using location.assign()...</p>';
+                setTimeout(() => {
+                    const homePage = getHomePageUrl();
+                    console.log('Redirecting to:', homePage);
+                    window.location.assign(homePage);
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>
